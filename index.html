@@ -6,7 +6,7 @@
 
 <meta charset="utf-8"/>
 
-<title>Space Shooter 3D - Immersive Cockpit</title>
+<title>Space Shooter 3D: Immersive & Calibrated</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
 
@@ -20,7 +20,7 @@ height: 100%;
 
 margin: 0; padding: 0;
 
-background: #080c20;
+background: #10131e;
 
 overflow: hidden;
 
@@ -44,7 +44,7 @@ left: 0; top: 0; display: block;
 
 z-index: 1;
 
-background: #000e18;
+background: #10131e;
 
 touch-action: none;
 
@@ -54,7 +54,7 @@ touch-action: none;
 
 position: absolute;
 
-right: 7vw; bottom: 7vw;
+right: 8vw; bottom: 7vw;
 
 width: 20vw; height: 20vw;
 
@@ -64,9 +64,9 @@ min-width: 58px; min-height: 58px;
 
 border-radius: 50%;
 
-background: linear-gradient(145deg, #1ee4ff66 40%, #1483f744 100%);
+background: linear-gradient(145deg, #39eefdcc 60%, #2e78e6cc 100%);
 
-border: 3px solid #2bf0ff;
+border: 3px solid #36defe;
 
 color: #fff;
 
@@ -76,21 +76,17 @@ font-family: inherit;
 
 font-weight: bold;
 
-box-shadow: 0 3px 30px #51e8ff44, 0 4px 20px #0af0ed19 inset;
+box-shadow: 0 0 15px #00c4ef66;
 
-z-index: 11;
+z-index: 20;
 
 display: flex; align-items: center; justify-content: center;
 
 transition: background 0.13s;
 
-touch-action: none;
-
-outline: none;
-
 cursor: pointer;
 
-opacity: 0.95;
+opacity: 0.96;
 
 backdrop-filter: blur(2px);
 
@@ -98,43 +94,49 @@ backdrop-filter: blur(2px);
 
 #shootBtn:active {
 
-background: linear-gradient(145deg, #60ecffb5 60%, #1996ff88);
+background: linear-gradient(145deg, #82faff 60%, #2741efff 100%);
+
+border-color: #66f3ff;
 
 }
 
 #scoreHud {
 
-position: absolute; left: 3vw; top: 2.3vw;
+position: absolute; left: 3vw; top: 2vw;
 
 z-index: 10;
 
-background: #0c1a28dd;
+background: #06131acc;
 
 color: #e3fcff;
 
-padding: 0.3em 1em 0.3em 1.15em;
+padding: 0.33em 1.2em 0.33em 1.25em;
 
 border-radius: 13px;
 
-font-size: 1.29rem;
+font-size: 1.39rem;
 
-box-shadow: 0 2px 12px #11e8ff22, 0 1.5px 8px #12548f50 inset;
+box-shadow: 0 1.5px 8px #00e3ff32 inset;
 
 pointer-events: none;
 
-border: 1.5px solid #24f3ff34;
+border: 1.5px solid #60fbff33;
 
-letter-spacing: 0.1em;
+font-weight: 600;
+
+letter-spacing: 0.13em;
+
+backdrop-filter: blur(4px);
 
 }
 
 #healthBar {
 
-margin-top: .5em;
+margin-top: .51em;
 
-width: 96px;
+width: 100px;
 
-height: 13px;
+height: 14px;
 
 background: #164d5e88;
 
@@ -158,7 +160,7 @@ border-radius: 3px;
 
 box-shadow: 0 1.5px 12px #69ffb691;
 
-transition: width 0.17s;
+transition: width 0.2s;
 
 }
 
@@ -168,41 +170,43 @@ position: absolute;
 
 left: 50%; top: 50%;
 
-transform: translate(-50%, -50%);
-
 pointer-events: none;
 
-z-index: 11;
+z-index: 15;
+
+transition: transform 0.09s cubic-bezier(.4,.5,.4,1.28);
 
 }
 
 #centerCrosshair svg {
 
-display: block; width: 52px; height: 52px;
+display: block;
 
-opacity: 0.96;
+width: 54px; height: 54px;
+
+opacity: 0.93;
 
 }
 
 #gameOverHud {
 
-position: absolute; left: 50%; top: 45%; transform: translate(-50%,-55%);
+position: absolute; left: 50%; top: 44%; transform: translate(-50%,-55%);
 
 z-index: 100;
 
-min-width: 215px;
+min-width: 225px;
 
-padding: 24px 32px 28px 32px;
+padding: 25px 34px 32px 34px;
 
-background: rgba(8,17,27,.93);
+background: rgba(9,21,36,.97);
 
 color: #d2fffd;
 
-font-size: 2.3rem;
+font-size: 2.2rem;
 
-border-radius: 19px;
+border-radius: 17px;
 
-box-shadow: 0 5.5px 70px #0de7fff6, 0 1.2px 16px #08232fcc;
+box-shadow: 0 2px 30px #00eaff66, 0 1px 6px #0cecff;
 
 text-align: center;
 
@@ -210,31 +214,31 @@ display: none;
 
 user-select: none;
 
-border: 2px solid #41f2ff33;
+border: 2px solid #45e2fa52;
 
-backdrop-filter: blur(5px);
+backdrop-filter: blur(3.5px);
 
 }
 
 #restartBtn {
 
-margin-top: 1.35em;
+margin-top: 1.2em;
 
-font-size: 1.18rem;
+font-size: 1.25rem;
 
 font-weight: bold;
 
-padding: 0.7em 1.7em;
+padding: 0.68em 1.8em;
 
-border-radius: 11px;
+border-radius: 13px;
 
 border: none;
 
-background: linear-gradient(100deg, #27e0ffbb 14%, #22aaff 93%);
+background: linear-gradient(100deg, #27e3ff 8%, #2773ef 87%);
 
-color: #fff; letter-spacing: 0.05em;
+color: #fff; letter-spacing: 0.07em;
 
-box-shadow: 0 0 9px #13ecff84;
+box-shadow: 0 0 9px #13ecffb4;
 
 cursor: pointer;
 
@@ -242,17 +246,17 @@ outline: none;
 
 font-family: inherit;
 
-transition: background 0.14s;
+transition: background 0.13s;
 
 }
 
-#restartBtn:active { background: #1289dc; }
+#restartBtn:active { background: #1599cc; }
 
 #permissionRequest {
 
 position: absolute; left: 0; top: 0; width: 100vw; height: 100vh;
 
-background: #000c;
+background: #091016ef;
 
 color: #fff;
 
@@ -260,11 +264,11 @@ display: flex;
 
 align-items: center; justify-content: center;
 
-font-size: 1.28rem;
+font-size: 1.25rem;
 
 flex-direction: column;
 
-z-index: 2000;
+z-index: 999;
 
 backdrop-filter: blur(2px);
 
@@ -278,11 +282,11 @@ text-align: center;
 
 margin-top: 2em;
 
-font-size: 1.23rem;
+font-size: 1.24rem;
 
-padding: 0.82em 2.2em;
+padding: 0.85em 2.24em;
 
-background: #1eeeff;
+background: #1de7ff;
 
 color: #003242;
 
@@ -292,7 +296,7 @@ border-radius: 11px;
 
 font-weight: bold;
 
-box-shadow: 0 0 13px #41e7ffb2, 0 6px 36px #2fdaff42;
+box-shadow: 0 0 13px #41e7ffb2, 0 5px 24px #2fdaff52;
 
 letter-spacing: 0.04em;
 
@@ -324,15 +328,15 @@ cursor: pointer;
 
 <circle cx="26" cy="26" r="15" fill="none" stroke="#30edff" stroke-width="2.1"/>
 
-<circle cx="26" cy="26" r="3.4" fill="#31cdff" fill-opacity="0.16" stroke="#11ffd1" stroke-width="1.2"/>
+<circle cx="26" cy="26" r="3.7" fill="#31cdff" fill-opacity="0.18" stroke="#11ffd1" stroke-width="1.3"/>
 
-<path d="M22 26h-6" stroke="#50fefc" stroke-width="1.2" stroke-linecap="round"/>
+<path d="M22 26h-7" stroke="#bafcfb" stroke-width="1.35" stroke-linecap="round"/>
 
-<path d="M36 26h6" stroke="#50fefc" stroke-width="1.2" stroke-linecap="round"/>
+<path d="M36 26h7" stroke="#bafcfb" stroke-width="1.35" stroke-linecap="round"/>
 
-<path d="M26 22v-6" stroke="#50fefc" stroke-width="1.2" stroke-linecap="round"/>
+<path d="M26 22v-7" stroke="#98f7f7" stroke-width="1.35" stroke-linecap="round"/>
 
-<path d="M26 36v6" stroke="#50fefc" stroke-width="1.2" stroke-linecap="round"/>
+<path d="M26 36v7" stroke="#98f7f7" stroke-width="1.35" stroke-linecap="round"/>
 
 </svg>
 
@@ -342,11 +346,11 @@ cursor: pointer;
 
 <div id="permissionRequest" style="display:none;">
 
-<div style="font-size:1.36em;font-weight:bold;">🚀 Allow Motion Sensor Access</div>
+<div style="font-size:1.4em;font-weight:bold;">🚀 Allow Motion Sensor Access</div>
 
-<div style="margin-top:1em;max-width:85vw;font-size:1em;">
+<div style="margin-top:1.1em;max-width:88vw;font-size:1.17em;">
 
-This game uses the accelerometer to steer and aim.<br>TAP ALLOW to enable controls.
+This game uses the accelerometer to steer and aim.<br>TAP ALLOW to enable controls and calibrate.
 
 </div>
 
@@ -366,7 +370,7 @@ This game uses the accelerometer to steer and aim.<br>TAP ALLOW to enable contro
 
 <script>
 
-/* ------------ Core state & settings ------------ */
+/* ------------------ GAME STATE & CONSTANTS ------------------ */
 
 const width = window.innerWidth, height = window.innerHeight;
 
@@ -388,7 +392,7 @@ canvas.height = window.innerHeight;
 
 window.addEventListener('resize', resizeCanvas);
 
-/* UI */
+/* --- UI Elements --- */
 
 const shootBtn = document.getElementById('shootBtn');
 
@@ -408,31 +412,27 @@ const finalScore = document.getElementById('finalScore');
 
 const restartBtn = document.getElementById('restartBtn');
 
-/* --- Player Ship State --- */
+const crosshairDiv = document.getElementById('centerCrosshair');
+
+/* ------------------ PLAYER/SHIP STATE ---------------------- */
 
 const player = {
 
 x: 0, y: 0, z: 4,
 
-// ship aim by rotX/pitch & rotY/yaw, in radians
+rotX: 0, rotY: 0, // In radians; relative to calibration baseline!
 
-rotX: 0, rotY: 0,
+aimX: 0, aimY: 0, // Smoothed for crosshair
 
-// actual ship trajectory for smooth movement
+v: 1.35,
 
-targetX: 0, targetY: 0, targetZ: 4,
+inertia: 0.13,
 
-vspeed: 1.2,
+aimSmooth: 0.16,
 
-inertia: 0.13, // position lerp
+maxTiltAngle: 1.1, // Limit
 
-aimSmooth: 0.19, // for feel
-
-maxTiltAngle: 1.02,
-
-zeroTiltX: 0, zeroTiltY: 0,
-
-health: 1,
+health: 1.0,
 
 lastLaser: 0,
 
@@ -440,11 +440,35 @@ score: 0,
 
 dead: false,
 
-invuln: 0
+invuln: 0,
+
+// For calibration
+
+baselineBeta: null,
+
+baselineGamma: null
 
 };
 
-/* --- World / Entities --- */
+/*
+
+Accelerometer Calibration logic:
+
+- At game start (or calibrate), baselineBeta/Gamma are set to current orientation.
+
+- All orientation readings during play are expressed as
+
+(current_beta - baselineBeta) and (current_gamma - baselineGamma),
+
+giving "center-forward" matching initial hold.
+
+- All aim/camera rotation math uses these diffs (in degrees to radians, clamped).
+
+- The crosshair is always at the projected center of the view/camera.
+
+*/
+
+/* ----------------- OBJECTS --------------------- */
 
 let asteroids = [];
 
@@ -458,27 +482,45 @@ let explosions = [];
 
 let crashAnim = 0;
 
-/* --- Starfield for depth effect --- */
-
 let starfield = [];
 
-const STAR_COUNT = Math.min(180, Math.floor(width*height/900));
+const STAR_COUNT = Math.min(190, Math.floor(width*height/750));
 
 function genStarfield() {
 
+// More subtle depth, varied star color
+
 starfield = [];
 
-for(let i=0;i<STAR_COUNT;++i) {
+for (let i=0; i<STAR_COUNT; ++i) {
+
+let colorSet = [
+
+"#f7fafd", // white
+
+"#ccdbe9", // blue-ish
+
+"#8ee3e9", // cyan
+
+"#ffe9da", // warm
+
+"#b4b5c8", // gray faint
+
+"#f9bcb4" // pale red
+
+];
 
 starfield.push({
 
-x: (Math.random()*2-1)*15,
+x: (Math.random()*2-1)*13,
 
 y: (Math.random()*2-1)*10,
 
 z: Math.random()*70+10,
 
-c: (Math.random()>0.75)?'#fff':(Math.random()>0.45?'#c3f7ff':'#eafcff')
+color: colorSet[Math.floor(Math.random()*colorSet.length)],
+
+twinkle: Math.random()<0.27
 
 });
 
@@ -488,79 +530,95 @@ c: (Math.random()>0.75)?'#fff':(Math.random()>0.45?'#c3f7ff':'#eafcff')
 
 genStarfield();
 
-/* --- World difficulty values --- */
+/* --- Difficulty - up as score rises --- */
 
-let asteroidSpeed = 8.2, asteroidInterval = 900, debrisInterval = 1200, enemyInterval = 2750;
+let asteroidSpeed = 8.2, asteroidInterval = 900, debrisInterval = 1200, enemyInterval = 2700;
 
 let lastAsteroid = 0, lastDebris = 0, lastEnemy = 0;
 
-/* --- Motion/Touch Input --- */
+/* ---------------- DeviceMotion CALIBRATION HANDLING ----------------- */
 
-let tiltAvailable = false, neutralized = false;
+let tiltActive = false;
 
-let beta = 0, gamma = 0, alpha = 0; // Raw
+let initialised = false; // Set to true after first calibration
 
-function handleTilt(b, g) {
+let rawBeta = 0, rawGamma = 0; // Most recent values
 
-if (!neutralized) return;
+function calibrateOrientation() {
 
-// Use offset-calibrated tilt, in radians
+// Called at game start or tap to set forward "zero"
 
-let dx = (g - player.zeroTiltX) * Math.PI/180;
+player.baselineBeta = rawBeta || 0;
 
-let dy = (b - player.zeroTiltY) * Math.PI/180;
+player.baselineGamma = rawGamma || 0;
 
-dx = Math.max(-player.maxTiltAngle, Math.min(player.maxTiltAngle, dx));
-
-dy = Math.max(-player.maxTiltAngle, Math.min(player.maxTiltAngle, dy));
-
-// Use inertia for natural camera aim
-
-player.rotY += (dx - player.rotY) * player.aimSmooth;
-
-player.rotX += (dy - player.rotX) * player.aimSmooth;
+initialised = true;
 
 }
 
+function handleTilt(beta, gamma) {
+
+// Both are degrees; use diff from baseline (see calibrateOrientation notes above)
+
+if (!initialised) return;
+
+let dG = gamma - player.baselineGamma;
+
+let dB = beta - player.baselineBeta;
+
+// Clamp for sanity
+
+dG = Math.max(-player.maxTiltAngle*57.3, Math.min(player.maxTiltAngle*57.3, dG));
+
+dB = Math.max(-player.maxTiltAngle*57.3, Math.min(player.maxTiltAngle*57.3, dB));
+
+// Smooth aim for visual crosshair - more responsive than main ship to track view
+
+player.aimY += ((dG*Math.PI/180)-player.aimY) * 0.37;
+
+player.aimX += ((dB*Math.PI/180)-player.aimX) * 0.37;
+
+// Camera
+
+player.rotY += (((dG*Math.PI/180) - player.rotY) * player.aimSmooth);
+
+player.rotX += (((dB*Math.PI/180) - player.rotX) * player.aimSmooth);
+
+}
+
+/* --- Setup DeviceMotion --- */
+
 function setupMotion() {
 
-tiltAvailable = true;
+tiltActive = true;
 
-window.addEventListener('deviceorientation', function (e) {
+window.addEventListener('deviceorientation', function(e){
 
-beta = e.beta; gamma = e.gamma; alpha = e.alpha;
+rawBeta = e.beta; rawGamma = e.gamma;
 
-handleTilt(beta, gamma);
+handleTilt(rawBeta, rawGamma);
 
 }, true);
 
 }
 
-function calibrateTilt() {
-
-player.zeroTiltX = gamma || 0;
-
-player.zeroTiltY = beta || 0;
-
-neutralized = true;
-
-}
+/* --- Permission for iPhone Safari --- */
 
 function requestMotionPermissionIfNeeded(){
 
-let needPerm = window.DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === 'function';
+let needPerm = window.DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission==="function";
 
 if(needPerm){
 
-permissionRequest.style.display = 'flex';
+permissionRequest.style.display="flex";
 
-permissionBtn.onclick = function(){
+permissionBtn.onclick=function(){
 
 DeviceMotionEvent.requestPermission().then(function(state){
 
 if(state==='granted'){
 
-permissionRequest.style.display = 'none';
+permissionRequest.style.display="none";
 
 setupMotion();
 
@@ -572,49 +630,37 @@ setupMotion();
 
 } else {
 
-setupMotion();
+permissionRequest.style.display="none";
 
-permissionRequest.style.display = 'none';
+setupMotion();
 
 }
 
-};
+}
 
 requestMotionPermissionIfNeeded();
 
-// Allow tap anywhere to calibrate center
+// Tap-hold anywhere to recalibrate orientation
 
-window.addEventListener('touchstart',function(){
+window.addEventListener('touchend',function(e){
 
-calibrateTilt();
+calibrateOrientation();
+
+showCenterMsg("Calibrated!");
+
+setTimeout(hideCenterMsg,900);
 
 },{passive:true});
 
-/* --- GAME OVER/RESTART --- */
+// On initial game load, calibrate after 0.3s (ensures phone is steady at entry)
 
-restartBtn.onclick = resetGame;
+setTimeout(calibrateOrientation, 350);
 
-function endGame(reason) {
+/* ------------ SHOOTING (No Aim Reset) ------------ */
 
-player.dead = true;
-
-setTimeout(()=> {
-
-gameOverHud.style.display = 'block';
-
-gameOverText.textContent = reason||'Crashed!';
-
-finalScore.innerHTML = `FINAL SCORE<br /><span style="color:#beeeff;font-size:1.38em;">${Math.floor(player.score)}</span>`;
-
-}, 950);
-
-}
-
-/* --- LASER DIRECTION: Always matches current camera aim --- */
+// Laser fires in the current camera direction (rotX, rotY at click)
 
 function getAimDir() {
-
-// Use normalized direction vector from camera (rotX/Y)
 
 const sinX = Math.sin(player.rotX), cosX = Math.cos(player.rotX);
 
@@ -636,19 +682,25 @@ function fireLaser(evt) {
 
 if (player.dead) return;
 
-(evt && evt.preventDefault && evt.preventDefault());
+if (evt && evt.preventDefault) evt.preventDefault();
 
 const now = performance.now()/1000;
 
-if (now - player.lastLaser < 0.19) return;
+if (now - player.lastLaser < 0.16) return;
 
 player.lastLaser = now;
+
+// Use *actual* current orientation, do NOT reset camera angles
 
 const {dx,dy,dz} = getAimDir();
 
 lasers.push({
 
-x: player.x, y: player.y, z: player.z+0.5,
+x: player.x,
+
+y: player.y,
+
+z: player.z+0.7,
 
 dx, dy, dz,
 
@@ -664,7 +716,7 @@ shootBtn.addEventListener('touchstart', fireLaser, {passive:false});
 
 shootBtn.addEventListener('mousedown', fireLaser);
 
-/* --- SFX (Web Audio, pure JS) --- */
+/* ---------- SFX ----------- */
 
 let audioCtx = null;
 
@@ -682,19 +734,19 @@ const g = audioCtx.createGain();
 
 o.type = 'triangle';
 
-o.frequency.setValueAtTime(920, audioCtx.currentTime);
+o.frequency.setValueAtTime(1100,audioCtx.currentTime);
 
-o.frequency.linearRampToValueAtTime(1680, audioCtx.currentTime+0.07);
+o.frequency.linearRampToValueAtTime(1400,audioCtx.currentTime+0.07);
 
-o.frequency.linearRampToValueAtTime(430, audioCtx.currentTime+0.15);
+o.frequency.linearRampToValueAtTime(550,audioCtx.currentTime+0.15);
 
-g.gain.setValueAtTime(0.22, audioCtx.currentTime);
+g.gain.setValueAtTime(.20,audioCtx.currentTime);
 
-g.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime+0.19);
+g.gain.linearRampToValueAtTime(0.01,audioCtx.currentTime+0.17);
 
 o.connect(g); g.connect(audioCtx.destination);
 
-o.start(); o.stop(audioCtx.currentTime+0.19);
+o.start(); o.stop(audioCtx.currentTime+0.18);
 
 }catch(e){}
 
@@ -716,15 +768,15 @@ o.type = 'sawtooth'; g.gain.value=0.3;
 
 o.frequency.setValueAtTime(190,audioCtx.currentTime);
 
-o.frequency.linearRampToValueAtTime(44,audioCtx.currentTime+0.31);
+o.frequency.linearRampToValueAtTime(44,audioCtx.currentTime+0.29);
 
 g.gain.setValueAtTime(.25, audioCtx.currentTime);
 
-g.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime+0.36);
+g.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime+0.31);
 
 o.connect(g); g.connect(audioCtx.destination);
 
-o.start(); o.stop(audioCtx.currentTime+0.36);
+o.start(); o.stop(audioCtx.currentTime+0.33);
 
 }catch(e){}
 
@@ -744,33 +796,57 @@ const g = audioCtx.createGain();
 
 o.type = "square"; g.gain.value=0.4;
 
-o.frequency.setValueAtTime(410,audioCtx.currentTime);
+o.frequency.setValueAtTime(310,audioCtx.currentTime);
 
-o.frequency.linearRampToValueAtTime(62,audioCtx.currentTime+0.23);
+o.frequency.linearRampToValueAtTime(62,audioCtx.currentTime+0.21);
 
 g.gain.setValueAtTime(.33, audioCtx.currentTime);
 
-g.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime+0.26);
+g.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime+0.24);
 
 o.connect(g); g.connect(audioCtx.destination);
 
-o.start(); o.stop(audioCtx.currentTime+0.27);
+o.start(); o.stop(audioCtx.currentTime+0.26);
 
 }catch(e){}
 
 }
 
-/* --- ENTITIES --- */
+/* ------------- GAME OBJECTS SPAWN & PHYSICS ---------------- */
 
 function spawnAsteroid() {
 
-const radius = Math.random()*2.1+1.1;
+/* Asteroid: large, colored, varied! */
+
+// Size increased for visibility (see also style variants)
+
+const styles = [
+
+// grays, reds, icy blue, brown
+
+{tone:0.74, edge:"#b2b2c2", fill:"#9994a6"},
+
+{tone:0.51, edge:"#efe2e2", fill:"#e48577"},
+
+{tone:0.61, edge:"#b9f3ff", fill:"#90daef"},
+
+{tone:0.62, edge:"#f4d7a7", fill:"#ad7c5d"},
+
+{tone:0.82, edge:"#efc6ff", fill:"#eebaee"},
+
+{tone:0.41, edge:"#888", fill:"#65666b"}
+
+];
+
+const style = styles[Math.floor(Math.random()*styles.length)];
+
+const radius = 3.8 + Math.random()*2.1; // LARGE!
 
 const theta = (Math.random()-0.5) * Math.PI*0.7;
 
 const phi = (Math.random()-0.5) * Math.PI/4;
 
-let dist = 40 + Math.random()*32;
+let dist = 40 + Math.random()*30;
 
 let fx = Math.sin(theta) * dist;
 
@@ -778,11 +854,11 @@ let fy = Math.sin(phi) * dist;
 
 let fz = Math.cos(theta) * dist;
 
-let vx = (Math.random()-0.5)*0.19;
+let vx = (Math.random()-0.5)*0.25;
 
-let vy = (Math.random()-0.5)*0.19;
+let vy = (Math.random()-0.5)*0.22;
 
-let vz = -(asteroidSpeed*0.95 + Math.random()*asteroidSpeed*0.13);
+let vz = -(asteroidSpeed*0.95 + Math.random()*asteroidSpeed*0.18);
 
 asteroids.push({
 
@@ -794,7 +870,11 @@ rot: [Math.random()*Math.PI*2, Math.random()*Math.PI*2],
 
 rotSpeed: [(Math.random()-0.5)*1.1, (Math.random()-0.5)*.7],
 
-colorTone: 0.54 + Math.random()*0.35,
+fill: style.fill,
+
+edge: style.edge,
+
+colorTone: style.tone,
 
 vx, vy, vz
 
@@ -804,71 +884,77 @@ vx, vy, vz
 
 function spawnDebris() {
 
-const size = 0.43+Math.random()*0.6;
+// Smaller fragments, blue/metallic/glassy variants
 
-const angle = (Math.random()-0.5) * Math.PI;
+const debrisColors=['#7cb2ae','#b0dbee','#d2dbff','#8e9fb6','#c6eaff','#eee9ff'];
 
-let dist = 32 + Math.random()*55;
+const size = 1.25+Math.random()*1.12;
 
-let fx = Math.sin(angle) * dist;
+const angle = (Math.random()-0.5)* Math.PI;
 
-let fy = (Math.random()-0.5)*10.5;
+let dist = 31 + Math.random()*45;
 
-let fz = Math.cos(angle) * dist;
+let fx = Math.sin(angle)*dist;
+
+let fy = (Math.random()-0.5)*10.2;
+
+let fz = Math.cos(angle)*dist;
 
 debris.push({
 
-x: player.x + fx, y: player.y + fy, z: player.z + fz,
+x:player.x+fx, y:player.y+fy, z:player.z+fz,
 
-radius: size,
+radius:size,
 
 rot: [Math.random()*Math.PI*2],
 
-rotSpeed: [(Math.random()-0.5)*2.1],
+rotSpeed: [(Math.random()-0.5)*2.4],
 
-color: (Math.random()>0.64)?'#7cb2ae':'#c8e1fb',
+color: debrisColors[Math.floor(Math.random()*debrisColors.length)],
 
-vx: (Math.random()-0.5)*0.19,
+vx:(Math.random()-0.5)*0.17,vy:(Math.random()-0.5)*0.17,
 
-vy: (Math.random()-0.5)*0.18,
-
-vz: -(asteroidSpeed*0.69 + Math.random()*asteroidSpeed*0.33)
+vz:-(asteroidSpeed*0.69 + Math.random()*asteroidSpeed*0.31)
 
 });
 
 }
 
-function spawnEnemy() {
+function spawnEnemy(){
 
-const dist = 56 + Math.random()*31;
+// Triangular, white/blue glow
 
-const h = (Math.random()-0.5) * Math.PI*0.85;
+const dist = 55 + Math.random()*25;
 
-let fx = Math.sin(h) * dist;
+const h = (Math.random()-0.5) * Math.PI*0.83;
 
-let fy = (Math.random()-0.5) * 6.7;
+let fx = Math.sin(h)*dist;
 
-let fz = Math.cos(h) * dist;
+let fy = (Math.random()-0.5) * 6.5;
+
+let fz = Math.cos(h)*dist;
 
 enemies.push({
 
-x: player.x+fx, y: player.y+fy, z: player.z+fz,
+x:player.x+fx, y:player.y+fy, z:player.z+fz,
 
-radius: 1.3+Math.random()*1.3,
+radius: 2.1+Math.random()*1.1,
 
 rot: (Math.random()-0.5)*Math.PI,
 
-speed: -(asteroidSpeed*0.97 + Math.random()*asteroidSpeed*0.12),
+speed: -(asteroidSpeed*0.91 + Math.random()*asteroidSpeed*0.18),
 
-health: 2
+health:2
 
 });
 
 }
 
-/* --- PROJECTION --- */
+/* ------------- 3D PROJECTION ------------------- */
 
 function project3D(wx,wy,wz){
+
+// "Camera" looks from player pos, with rotX/pitch and rotY/yaw.
 
 let dx = wx-player.x, dy = wy-player.y, dz = wz-player.z;
 
@@ -886,7 +972,7 @@ z = sx*dy + cx*z;
 
 if(z < Z_NEAR) return null;
 
-const f = 0.58*height / Math.tan(FOV * Math.PI/360);
+const f = 0.57*height / Math.tan(FOV * Math.PI/360);
 
 let px = width/2 + x/z * f;
 
@@ -896,7 +982,7 @@ return {x:px, y:py, z:z};
 
 }
 
-/* --- COLLISIONS --- */
+/* ------------- COLLISIONS ---------------------- */
 
 function segmentSphereHit(l, segLen, obj, rad){
 
@@ -934,7 +1020,7 @@ return Math.sqrt(dx*dx+dy*dy+dz*dz) - (ra+rb);
 
 }
 
-/* --- DRAW 3D ENTITIES --- */
+/* ------------ HUD, COCKPIT, RENDERING ------------ */
 
 function renderStarfield(){
 
@@ -942,23 +1028,25 @@ for(let s of starfield){
 
 let z = s.z;
 
-let offX = s.x + player.rotY*25;
+let offX = s.x + player.rotY*28;
 
-let offY = s.y + player.rotX*28;
+let offY = s.y + player.rotX*29;
 
 let pr = project3D(player.x+offX, player.y+offY, player.z+z);
 
 if(!pr) continue;
 
-let size = 0.7 + 4.9/(pr.z+2);
+let base = 1.2 + 3.9/(pr.z+2); // slightly more visible
 
-ctx.globalAlpha = Math.max(0.13, 0.45/(pr.z*0.19));
+ctx.globalAlpha = Math.max(0.14, 0.43/(pr.z*0.17));
 
-ctx.fillStyle = s.c;
+ctx.fillStyle = s.color;
+
+let tw = s.twinkle? (0.7 + Math.abs(Math.sin(Date.now()*0.0012+z))*0.5) : 1;
 
 ctx.beginPath();
 
-ctx.arc(pr.x, pr.y, size, 0, 2*Math.PI);
+ctx.arc(pr.x, pr.y, base*tw, 0, 2*Math.PI);
 
 ctx.fill();
 
@@ -974,35 +1062,43 @@ for(let a of asteroids){
 
 let pr = project3D(a.x,a.y,a.z); if(!pr) continue;
 
-let rad = a.radius * (height/19)/pr.z;
+let rad = a.radius * (height/15.5)/pr.z;
 
 ctx.save(); ctx.translate(pr.x,pr.y);
 
-let color = `rgba(${70+a.colorTone*95},${80+a.colorTone*55},${93*a.colorTone+20},0.96)`;
+// Shadowed edge
+
+let shade = ctx.createRadialGradient(0,0,rad*0.55, 0,0,rad*1.2);
+
+shade.addColorStop(0,a.fill);
+
+shade.addColorStop(0.75,a.edge);
+
+shade.addColorStop(1,"#111");
 
 ctx.beginPath();
 
 ctx.arc(0,0,rad,0,2*Math.PI);
 
-ctx.fillStyle=color;
+ctx.fillStyle=shade;
 
-ctx.shadowColor="#3a3b33";
+ctx.shadowColor="#222a";
 
-ctx.shadowBlur=rad*0.4;
+ctx.shadowBlur=rad*0.6;
 
 ctx.fill();
 
-// craters
+// Simulated craters/highlights
 
-ctx.globalAlpha=0.24;
+ctx.globalAlpha=0.23;
 
 for(let i=0;i<6;i++){
 
-ctx.beginPath();
-
 let ang = i*2*Math.PI/6 + a.rot[0];
 
-ctx.arc(Math.cos(ang)*rad*0.56, Math.sin(ang)*rad*0.58, rad*0.22, 0, 2*Math.PI);
+ctx.beginPath();
+
+ctx.arc(Math.cos(ang)*rad*0.5, Math.sin(ang)*rad*0.58, rad*0.35, 0, 2*Math.PI);
 
 ctx.fillStyle = "#181816";
 
@@ -1014,9 +1110,9 @@ ctx.globalAlpha=1;
 
 ctx.restore();
 
-a.rot[0]+=a.rotSpeed[0]*0.029;
+a.rot[0]+=a.rotSpeed[0]*0.021;
 
-a.rot[1]+=a.rotSpeed[1]*0.025;
+a.rot[1]+=a.rotSpeed[1]*0.019;
 
 }
 
@@ -1028,19 +1124,21 @@ for(let d of debris){
 
 let pr = project3D(d.x,d.y,d.z); if(!pr) continue;
 
-let rad = d.radius * (height/32)/pr.z;
+let rad = d.radius * (height/30)/pr.z;
 
 ctx.save(); ctx.translate(pr.x,pr.y); ctx.rotate(d.rot[0]);
 
-ctx.fillStyle = d.color; ctx.globalAlpha=0.74;
+ctx.fillStyle = d.color; ctx.globalAlpha=0.83;
+
+// "shard" shape
 
 ctx.beginPath();
 
-ctx.moveTo(0,-rad*1.18); ctx.lineTo(rad*0.66,rad*0.85); ctx.lineTo(-rad*0.6,rad*0.7); ctx.closePath();
+ctx.moveTo(0,-rad*1.05); ctx.lineTo(rad*0.57,rad*0.8); ctx.lineTo(-rad*0.5,rad*0.53); ctx.closePath();
 
 ctx.fill(); ctx.globalAlpha=1; ctx.restore();
 
-d.rot[0]+=d.rotSpeed[0]*0.04;
+d.rot[0]+=d.rotSpeed[0]*0.035;
 
 }
 
@@ -1052,7 +1150,7 @@ for(let e of enemies){
 
 let pr = project3D(e.x,e.y,e.z); if(!pr) continue;
 
-let rad = e.radius * (height/16)/pr.z;
+let rad = e.radius * (height/15)/pr.z;
 
 ctx.save();
 
@@ -1060,27 +1158,27 @@ ctx.translate(pr.x,pr.y); ctx.rotate(e.rot);
 
 ctx.beginPath();
 
-ctx.moveTo(0,-rad*1.05);
+ctx.moveTo(0,-rad*1.09);
 
-ctx.lineTo(rad*0.8,rad*1);
+ctx.lineTo(rad*0.9,rad*1.07);
 
-ctx.lineTo(-rad*0.8,rad*1);
+ctx.lineTo(-rad*0.9,rad*1.07);
 
 ctx.closePath();
 
-ctx.fillStyle = "#4ff8fa";
+ctx.fillStyle = "#6cfbfa";
 
-ctx.shadowColor = "#00e0e7";
+ctx.shadowColor = "#3ee6f6";
 
 ctx.shadowBlur = 8;
 
-ctx.globalAlpha = 0.81;
+ctx.globalAlpha = 0.83;
 
 ctx.fill();
 
-ctx.beginPath(); ctx.arc(0,0, rad*0.41,0,2*Math.PI);
+ctx.beginPath(); ctx.arc(0,0, rad*0.44,0,2*Math.PI);
 
-ctx.globalAlpha=0.33; ctx.fillStyle="#fff";
+ctx.globalAlpha=0.34; ctx.fillStyle="#fff";
 
 ctx.fill();
 
@@ -1094,7 +1192,7 @@ function renderLasers(){
 
 for(let l of lasers){
 
-const len = 2.5;
+const len = 3.5;
 
 let prj1 = project3D(l.x, l.y, l.z);
 
@@ -1108,17 +1206,17 @@ let grad = ctx.createLinearGradient(prj1.x,prj1.y,prj2.x,prj2.y);
 
 grad.addColorStop(0,"#fff");
 
-grad.addColorStop(0.4,"#19f2ff");
+grad.addColorStop(0.36,"#12f2ff");
 
-grad.addColorStop(1,"#11eaff");
+grad.addColorStop(1,"#0af7e7");
 
 ctx.strokeStyle=grad;
 
-ctx.lineWidth = 2.4 + 4/(0.65+prj1.z);
+ctx.lineWidth = 3.4 + 5.2/(0.53+prj1.z);
 
 ctx.shadowColor="#21eaff";
 
-ctx.shadowBlur=8;
+ctx.shadowBlur=12;
 
 ctx.beginPath();
 
@@ -1128,13 +1226,13 @@ ctx.lineTo(prj2.x,prj2.y);
 
 ctx.stroke();
 
-ctx.globalAlpha=0.19;
+ctx.globalAlpha=0.18;
 
 ctx.beginPath();
 
-ctx.arc(prj1.x,prj1.y, ctx.lineWidth*1.6, 0, 2*Math.PI);
+ctx.arc(prj1.x,prj1.y, ctx.lineWidth*1.7, 0, 2*Math.PI);
 
-ctx.fillStyle="#d2efff"; ctx.fill();
+ctx.fillStyle="#aeecff"; ctx.fill();
 
 ctx.globalAlpha=1; ctx.restore();
 
@@ -1146,23 +1244,23 @@ function renderExplosions(){
 
 for(let e of explosions){
 
-let t = Math.min(1, e.age/0.38);
+let t = Math.min(1, e.age/0.41);
 
 let pr = project3D(e.x, e.y, e.z); if(!pr) continue;
 
-let R = e.r / (1+t*1.3) * (height/25)/pr.z;
+let R = e.r / (1+t*1.25) * (height/24)/pr.z;
 
 ctx.save();
 
 let grd = ctx.createRadialGradient(pr.x,pr.y,0,pr.x,pr.y,R);
 
-grd.addColorStop(0,"#ffe");
+grd.addColorStop(0,"#fffbe6");
 
-grd.addColorStop(0.22,"#ffd598");
+grd.addColorStop(0.28,"#ffe48e");
 
-grd.addColorStop(0.53,"#f97d34");
+grd.addColorStop(0.68,"#f98e44");
 
-grd.addColorStop(1,"rgba(220,70,30,0)");
+grd.addColorStop(1,"rgba(220,80,40,0)");
 
 ctx.globalAlpha=1-t;
 
@@ -1184,45 +1282,53 @@ ctx.save();
 
 const w = canvas.width, h = canvas.height;
 
-// Glass frame overlay
+ctx.globalAlpha = 0.8;
 
-ctx.globalAlpha = 0.75;
-
-ctx.strokeStyle = "#23f8ff";
+ctx.strokeStyle = "#14f8ff";
 
 ctx.lineWidth = Math.max(2, w*0.012);
 
 ctx.beginPath();
 
-ctx.ellipse(w/2, h*0.56, w*0.39, h*0.33, 0, 0, Math.PI, true);
+ctx.ellipse(w/2, h*0.57, w*0.39, h*0.32, 0, 0, Math.PI, true);
 
 ctx.stroke();
 
-// Dashboard panel
+ctx.globalAlpha = .14;
+
+ctx.beginPath();
+
+ctx.ellipse(w/2, h*0.7, w*0.25, h*0.13, 0, 0, 2*Math.PI);
+
+ctx.fillStyle = "#cafdff";
+
+ctx.fill();
+
+// Dashboard
 
 let dashH = h*0.155;
 
-ctx.globalAlpha = .82;
+ctx.globalAlpha = .9;
 
 let grd = ctx.createLinearGradient(0,h-dashH,0,h);
 
-grd.addColorStop(0,"rgba(19,43,59,0.97)"); grd.addColorStop(0.6,"#1e2a36");
+grd.addColorStop(0,"rgba(19,43,59,0.96)");grd.addColorStop(0.6,"#213e4e");
 
-grd.addColorStop(1,"#03151c");
+grd.addColorStop(1,"#142430");
 
 ctx.fillStyle=grd;
 
 ctx.beginPath();
 
-ctx.moveTo(w*0.13,h-dashH*0.1);
+ctx.moveTo(w*0.13,h-dashH*0.13);
 
-ctx.lineTo(w*0.17,h-dashH*0.61);
+ctx.lineTo(w*0.17,h-dashH*0.58);
 
-ctx.bezierCurveTo(w*0.27,h-dashH*1.07, w*0.73,h-dashH*1.07, w*0.83,h-dashH*0.61);
+ctx.bezierCurveTo(w*0.3,h-dashH*0.97, w*0.7,h-dashH*0.97, w*0.83,h-dashH*0.58);
 
-ctx.lineTo(w*0.87, h-dashH*0.1);
+ctx.lineTo(w*0.87,h-dashH*0.13);
 
-ctx.lineTo(w*0.13,h-dashH*0.1);
+ctx.lineTo(w*0.13,h-dashH*0.13);
 
 ctx.closePath(); ctx.fill();
 
@@ -1230,31 +1336,155 @@ ctx.restore();
 
 }
 
-/* --- MAIN LOOP --- */
+/* ------------ CROSSHAIR TRACKING ------------ */
+
+// The crosshair is always at center, but for added effect and "tracking":
+
+// We slightly offset the crosshair SVG position based on the ship's current view orientation.
+
+// This keeps visual alignment with aiming and makes the crosshair "move" with view, without jitter.
+
+/*
+
+The visible center-crosshair is a DOM element (centerCrosshair).
+
+We center it, but in JS, on every frame, we slightly shift its CSS translate
+
+in X/Y according to player.aimY/player.aimX (in radians)
+
+*/
+
+function updateCrosshairPosition() {
+
+// max shift for visual feedback (not raw aim!)
+
+let maxPx = Math.min(width, height) * 0.22;
+
+let px = player.aimY * maxPx;
+
+let py = player.aimX * maxPx;
+
+crosshairDiv.style.transform =
+
+`translate(-50%, -50%) translate(${px}px,${py}px)`;
+
+}
+
+/* --- Center screen HUD message for calibration, etc. --- */
+
+let centerMsgTimeout = null;
+
+function showCenterMsg(msg) {
+
+crosshairDiv.innerHTML = `<svg viewBox="0 0 52 52">
+
+<circle cx="26" cy="26" r="15" fill="#0ad9fa44" stroke="#20edff" stroke-width="2.3"/>
+
+<text x="26" y="29" fill="#e0f7fa" text-anchor="middle" font-size="9" font-family="sans-serif" font-weight="bold">${msg}</text>
+
+<circle cx="26" cy="26" r="3.9" fill="#53cafd" />
+
+</svg>`;
+
+if (centerMsgTimeout) clearTimeout(centerMsgTimeout);
+
+}
+
+function hideCenterMsg() {
+
+crosshairDiv.innerHTML = `
+
+<svg viewBox="0 0 52 52">
+
+<circle cx="26" cy="26" r="15" fill="none" stroke="#30edff" stroke-width="2.1"/>
+
+<circle cx="26" cy="26" r="3.7" fill="#31cdff" fill-opacity="0.18" stroke="#11ffd1" stroke-width="1.3"/>
+
+<path d="M22 26h-7" stroke="#bafcfb" stroke-width="1.35" stroke-linecap="round"/>
+
+<path d="M36 26h7" stroke="#bafcfb" stroke-width="1.35" stroke-linecap="round"/>
+
+<path d="M26 22v-7" stroke="#98f7f7" stroke-width="1.35" stroke-linecap="round"/>
+
+<path d="M26 36v7" stroke="#98f7f7" stroke-width="1.35" stroke-linecap="round"/>
+
+</svg>
+
+`;
+
+centerMsgTimeout = null;
+
+}
+
+/* -------------- MAIN GAME LOOP -------------- */
 
 let lastFrame = null;
 
 function resetGame(){
 
-player.x = 0; player.y = 0; player.z = 4;
+player.x = 0; player.y = 0; player.z = 4; player.rotX = 0; player.rotY = 0;
 
-player.rotX = 0; player.rotY = 0; player.health = 1; player.dead=false; player.score=0;
+player.aimX=0; player.aimY=0;
 
-player.targetX = 0; player.targetY = 0; player.targetZ = 4; player.invuln=0;
+player.health = 1.0; player.dead=false; player.score=0;
+
+player.invuln=0;
 
 asteroids = []; debris = []; enemies = []; lasers = []; explosions = [];
 
-lastAsteroid=0; lastDebris=0; lastEnemy=0; asteroidSpeed = 8.2; asteroidInterval=900; debrisInterval=1200; enemyInterval=2750;
+lastAsteroid=0; lastDebris=0; lastEnemy=0; asteroidSpeed = 8.2; asteroidInterval=900;
+
+debrisInterval=1200; enemyInterval=2700; crashAnim = 0; genStarfield();
 
 gameOverHud.style.display = 'none';
 
-crashAnim = 0; genStarfield();
+hideCenterMsg();
 
 lastFrame=null; requestAnimationFrame(gameLoop);
 
 }
 
-function gameLoop(now){
+// GAME OVER/RESTART
+
+restartBtn.onclick = resetGame;
+
+function endGame(reason) {
+
+player.dead = true;
+
+setTimeout(()=>{
+
+gameOverHud.style.display = 'block';
+
+gameOverText.textContent = reason||'Crashed!';
+
+finalScore.innerHTML = `FINAL SCORE<br /><span style="color:#beeeff;font-size:1.33em;">${Math.floor(player.score)}</span>`;
+
+}, 900);
+
+}
+
+/* --- Crash flash --- */
+
+function renderCrash(anim){
+
+let p = Math.min(1,anim/0.41);
+
+ctx.save();
+
+ctx.globalAlpha = .57*(1-p); ctx.fillStyle="#fff";
+
+ctx.fillRect(0,0,width,height);
+
+ctx.globalAlpha = .22*p; ctx.fillStyle="#e14";
+
+ctx.fillRect(0,0,width,height);
+
+ctx.restore();
+
+}
+
+function gameLoop(now) {
 
 if(player.dead) { renderCrash(crashAnim||0.5); return; }
 
@@ -1270,41 +1500,35 @@ lastFrame = t;
 
 asteroidInterval=880-Math.min(468,player.score*0.09);
 
-debrisInterval = 1190-Math.min(600,player.score*0.06);
+debrisInterval=1190-Math.min(600,player.score*0.06);
 
-enemyInterval = 2410 - Math.min(1100,player.score*0.04);
+enemyInterval=2410-Math.min(1100,player.score*0.05);
 
-asteroidSpeed = 8.2 + player.score*0.0021;
+asteroidSpeed = 8.2 + player.score*0.0022;
 
-// Ship smooth movement: ship "follows" pointer, with inertia
+// --- Player ship smooth movement ---
 
 let aim = getAimDir();
 
-player.targetX += aim.dx * player.vspeed * dt * .95;
+player.x += aim.dx*player.v*dt*0.98;
 
-player.targetY += aim.dy * player.vspeed * dt * .94;
+player.y += aim.dy*player.v*dt*0.97;
 
-player.targetZ += aim.dz * player.vspeed * dt * 0.95;
+player.z += aim.dz*player.v*dt*0.93;
 
-// Clamp to avoid lost in space
+// Clamp ship position
 
-player.targetX=Math.max(-20,Math.min(20,player.targetX));
+player.x = Math.max(-20, Math.min(20, player.x));
 
-player.targetY=Math.max(-11,Math.min(11,player.targetY));
+player.y = Math.max(-13, Math.min(13, player.y));
 
-// Ship position lerps toward 'target', i.e. mass/inertia
+player.z = Math.max(3, Math.min(90, player.z));
 
-player.x += (player.targetX-player.x)*player.inertia;
-
-player.y += (player.targetY-player.y)*player.inertia;
-
-player.z += (player.targetZ-player.z)*player.inertia*0.7;
-
-// Spawn Entities
+// --- Spawns ---
 
 const nowMs = now;
 
-if(nowMs-lastAsteroid > asteroidInterval && asteroids.length < 7){
+if(nowMs-lastAsteroid > asteroidInterval && asteroids.length < 6){
 
 spawnAsteroid(); lastAsteroid = nowMs;
 
@@ -1322,7 +1546,7 @@ spawnEnemy(); lastEnemy=nowMs;
 
 }
 
-// Move things
+// --- Update Entities ---
 
 for(let a of asteroids){
 
@@ -1336,19 +1560,15 @@ d.x+=d.vx*dt; d.y+=d.vy*dt; d.z+=d.vz*dt;
 
 }
 
-for(let e of enemies){
+for(let e of enemies) e.z+=e.speed*dt;
 
-e.z+=e.speed*dt;
-
-}
-
-asteroids = asteroids.filter(a=>a.z>Z_NEAR && Math.abs(a.x-player.x)<25 && Math.abs(a.y-player.y)<15);
+asteroids = asteroids.filter(a=>a.z>Z_NEAR && Math.abs(a.x-player.x)<30 && Math.abs(a.y-player.y)<19);
 
 debris = debris.filter(d=>d.z>Z_NEAR && Math.abs(d.x-player.x)<33);
 
-enemies = enemies.filter(e => e.z>Z_NEAR && Math.abs(e.x-player.x)<29);
+enemies = enemies.filter(e=>e.z>Z_NEAR && Math.abs(e.x-player.x)<29);
 
-// Lasers
+// --- Lasers ---
 
 for(let l of lasers){
 
@@ -1358,9 +1578,9 @@ l.x+=l.dx*63*dt; l.y+=l.dy*63*dt; l.z+=l.dz*63*dt;
 
 lasers = lasers.filter(l=>l.z>Z_NEAR&&l.z<Z_FAR);
 
-// COLLISIONS
+// --- Collisions ---
 
-// Laser - asteroid
+// Laser-asteroid
 
 for(let li=lasers.length-1;li>=0;li--){
 
@@ -1370,11 +1590,11 @@ for(let ai=asteroids.length-1;ai>=0;ai--){
 
 let a=asteroids[ai];
 
-if(segmentSphereHit(l,2.5,a,a.radius)){
+if(segmentSphereHit(l,3,a,a.radius*0.9)){
 
-player.score+=Math.floor(9*a.radius);
+player.score+=Math.floor(12*a.radius);
 
-explosions.push({x:a.x,y:a.y,z:a.z,r:a.radius*1.6,age:0});
+explosions.push({x:a.x,y:a.y,z:a.z,r:a.radius*1.5,age:0});
 
 playExplosionSound(); asteroids.splice(ai,1); lasers.splice(li,1); break;
 
@@ -1382,17 +1602,15 @@ playExplosionSound(); asteroids.splice(ai,1); lasers.splice(li,1); break;
 
 }
 
-// Laser-debris : just pass through
-
 for(let ei=enemies.length-1;ei>=0;ei--){
 
 let e=enemies[ei];
 
-if(segmentSphereHit(l,2.4,e,e.radius*.95)){
+if(segmentSphereHit(l,2.9,e,e.radius*.89)){
 
 e.health-=1; explosions.push({x:e.x,y:e.y,z:e.z,r:e.radius*2,age:0});
 
-playExplosionSound(); player.score+=30; lasers.splice(li,1);
+playExplosionSound(); player.score+=32; lasers.splice(li,1);
 
 if(e.health<=0) enemies.splice(ei,1);
 
@@ -1404,21 +1622,19 @@ break;
 
 }
 
-// Animate explosions
-
 for(let ex of explosions) ex.age+=dt;
 
-explosions = explosions.filter(e=>e.age<.48);
+explosions = explosions.filter(e=>e.age<.42);
 
-// Object/ship coll
+// Ship/object
 
 if(player.invuln<=0){
 
 for(let a of asteroids){
 
-if(sphereDistance(player,1.2,a,a.radius*0.96)<0){
+if(sphereDistance(player,1.88,a,a.radius*0.90)<0){
 
-crashAnim=0; explosions.push({x:a.x,y:a.y,z:a.z,r:a.radius*1.6,age:0});
+crashAnim=0; explosions.push({x:a.x,y:a.y,z:a.z,r:a.radius*1.4,age:0});
 
 playCrashSound(); setTimeout(()=>endGame("CRASHED INTO ASTEROID!"),800);
 
@@ -1430,21 +1646,21 @@ player.health = 0; player.dead=true; return;
 
 for(let d of debris){
 
-if(sphereDistance(player,1.15,d,d.radius*1.1)<0){
+if(sphereDistance(player,1.57,d,d.radius*0.92)<0){
 
-player.health -= .15; player.invuln=0.7;
+player.health -= .12; player.invuln=0.79;
 
 if(player.health<=0){
 
-crashAnim=0; explosions.push({x:d.x,y:d.y,z:d.z,r:d.radius*1.6,age:0});
+crashAnim=0; explosions.push({x:d.x,y:d.y,z:d.z,r:d.radius*1.5,age:0});
 
-playCrashSound(); setTimeout(()=>endGame("DESTROYED BY DEBRIS!"),800);
+playCrashSound(); setTimeout(()=>endGame("DESTROYED BY DEBRIS!"),700);
 
 player.health=0; player.dead=true; return;
 
 }
 
-explosions.push({x:d.x,y:d.y,z:d.z,r:d.radius*1.0,age:0});
+explosions.push({x:d.x,y:d.y,z:d.z,r:d.radius*1.3,age:0});
 
 debris.splice(debris.indexOf(d),1);
 
@@ -1454,11 +1670,11 @@ debris.splice(debris.indexOf(d),1);
 
 for(let e of enemies){
 
-if(sphereDistance(player,1.23,e,e.radius*0.9)<0){
+if(sphereDistance(player,1.65,e,e.radius*0.89)<0){
 
 crashAnim=0; explosions.push({x:e.x,y:e.y,z:e.z,r:e.radius*2,age:0});
 
-playCrashSound(); setTimeout(()=>endGame("COLLIDED WITH ENEMY!"),800);
+playCrashSound(); setTimeout(()=>endGame("COLLIDED WITH ENEMY!"),880);
 
 player.health = 0; player.dead=true; return;
 
@@ -1468,13 +1684,13 @@ player.health = 0; player.dead=true; return;
 
 } else { player.invuln-=dt;}
 
-// HUD
+// --- HUD
 
 healthBarInner.style.width = Math.max(0,player.health*100)+'%';
 
 scoreField.innerText = `SCORE: ${Math.floor(player.score)}`;
 
-// DRAW
+// --- DRAW SCENE ---
 
 ctx.clearRect(0,0,canvas.width,canvas.height);
 
@@ -1484,41 +1700,25 @@ renderStarfield(); renderAsteroids(); renderDebris(); renderEnemies(); renderLas
 
 ctx.save();
 
-let vGrd=ctx.createRadialGradient(width/2, height/2, height*0.62, width/2,height/2, height*1.17);
+let vGrd=ctx.createRadialGradient(width/2, height/2, height*0.61, width/2,height/2, height*1.12);
 
 vGrd.addColorStop(0,"rgba(0,0,0,0)");
 
-vGrd.addColorStop(1,"rgba(0,0,0,0.19)");
+vGrd.addColorStop(1,"rgba(0,0,0,0.23)");
 
 ctx.globalAlpha=1; ctx.fillStyle=vGrd; ctx.fillRect(0,0,width,height);
 
 ctx.restore();
 
+updateCrosshairPosition();
+
 // Crash overlay
 
 if(player.dead){ renderCrash(crashAnim||0); return;}
 
-if(crashAnim!==null){ crashAnim+=dt; if(crashAnim>0.48) crashAnim=null; }
+if(crashAnim!==null){ crashAnim+=dt; if(crashAnim>0.49) crashAnim=null; }
 
 requestAnimationFrame(gameLoop);
-
-}
-
-function renderCrash(anim){
-
-let p = Math.min(1,anim/0.44);
-
-ctx.save();
-
-ctx.globalAlpha = .52*(1-p); ctx.fillStyle="#fff";
-
-ctx.fillRect(0,0,width,height);
-
-ctx.globalAlpha = .22*p; ctx.fillStyle="#e14";
-
-ctx.fillRect(0,0,width,height);
-
-ctx.restore();
 
 }
 
@@ -1529,4 +1729,3 @@ resetGame();
 </body>
 
 </html>
-
