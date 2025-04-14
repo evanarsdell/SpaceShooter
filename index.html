@@ -1,1 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+  <title>Space Shooter 3D (Mobile, Pure HTML/CSS/JS)</title>
+  <style>
+    html, body {
+      height: 100%; margin: 0; padding: 0;
+      background: #000;
+      overflow: hidden;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    #gameCanvas {
+      display: block;
+      position: absolute;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      z-index: 1;
+      touch-action: none;
+      background: #000;
+    }
+    #shootBtn {
+      position: absolute;
+      right: 6vw;
+      bottom: 8vw;
+      width: 20vw;
+      height: 20vw;
+      max-width: 100px; max-height: 100px;
+      min-width: 55px; min-height: 55px;
+      background: rgba(255,255,255,0.14);
+      border: 3px solid #33aaff;
+      border-radius: 50%;
+      box-shadow: 0 4px 38px #33aaff44;
+      z-index: 10;
+      font-size: 2.6rem;
+      color: #33eaff;
+      text-shadow: 0 1px 6px #000, 0 0 2px #33aaff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      transition: background 0.12s;
+      backdrop-filter: blur(3px);
+    }
+    #shootBtn:active {
+      background: rgba(51,170,255,0.23);
+      border-color: #42c5ff;
+    }
+    #score {
+      position: absolute;
+      left: 6vw; top: 6vw;
+      color: #ddd;
+      font-family: 'Orbitron', monospace, 'Arial Black', Arial, sans-serif;
+      font-size: 2.1rem;
+      background: rgba(0,0,0,0.18);
+      border-radius: 10px;
+      padding: 0.25em 0.75em;
+      letter-spacing: 0.12em;
+      z-index: 10;
+      box-shadow: 0 1px 8px #111c;
+      user-select: none;
+    }
+    #permissionRequest {
+      position: absolute;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      z-index: 100;
+      background: #000a;
+      color: #fff;
+      display: flex;
+      align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      flex-direction: column;
+    }
+    #permissionBtn {
+      margin-top: 1.5em;
+      font-size: 1.4rem;
+      padding: 0.64em 1.4em;
+      background: #299aff;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      box-shadow: 0 0 12px #007cff66;
+      letter-spacing: 0.07em;
+      cursor: pointer;
+    }
+    /* Starfield effect behind canvas when not supported (fallback) */
+    #fallback-bg {
+      display: none;
+      position: absolute; left: 0; top: 0;
+      width: 100vw; height: 100vh; z-index: 0;
+      background: radial-gradient(ellipse at bottom, #22263e 0%, #01001a 100%);
+    }
+    /* Hide scrollbars! */
+    ::-webkit-scrollbar {display:none;}
+    body { -webkit-overflow-scrolling: touch;}
+  </style>
+</head>
+<body>
+<canvas id="gameCanvas"></canvas>
+<div id="fallback-bg"></div>
+<div id="score">0</div>
+<button id="shootBtn">🔫</button>
+<!-- DeviceMotion permission request for iOS -->
+<div id="permissionRequest" style="display:none;">
+  <div>🚀 Allow motion sensor access<br>to control your spaceship!</div>
+  <button id="permissionBtn">Allow Motion Access</button>
+</div>
+<script>
+/*
+  Mobile 3D Space Shooter - All code is pure, in this HTML.
+  Author: OpenAI's ChatGPT (prompted by you)
+*/
 
+// ==== SETTINGS AND CONSTANTS ====
+const width = window.innerWidth;
+const height = window.innerHeight;
+
+const FOV = 75; // degrees
+const Z_NEAR = 0.2;
+const Z_FAR = 100;
+
+const player = {
+  x: 0,
+  y: 0,
+  z: 0,
+  rotX: 0, // up/down, radians
+  rotY: 0, // left/right, radians
+  velX: 0, // In cockpit space (units/sec)
+  velY: 0,
+  tiltSensitivity: 0.014, // rad/° (scaled for smoothness)
+  smoothing: 0.14,
+  laserCooldown: 0.23, // seconds between shots
+};
+
+let asteroids = [];    // array of asteroid objects
+let lasers = [];       // array of laser objects
+let explosions = [];   // array of explosions
+
+const asteroidSettings = {
+  minZ: 20, maxZ: 80,
+  minRadius: 0.8, maxRadius: 2.5,
+  spawnInterval: 700, // ms
+  max: 10,
+  baseSpeed: 9.2, // units/sec (relative to player)
+};
+
+const laserSettings = {
+  speed: 53,
+  length: 2.25,
+  radius: 0.09, // To detect collision
+};
+let lastLaserTime = -1;
+
+let starfield = [];
+const starCount = Math.min(160, Math.floor(width * height / 1000));
+
+// --- DeviceMotion -----
+let tiltOffsetX = 0, tiltOffsetY = 0; // Calibration
+let tiltAvailable = false;
+
+// --- Game State -----
+let lastFrameTime = null;
+let gameRunning = true;
+let score = 0;
+
+// ==== CANVAS SETUP ====
+const canvas = document.getElementById('gameCanvas');
+canvas.width = width;
+canvas.height = height;
+const ctx = canvas.getContext('2d');
+
+// ==== UI SETUP ====
+const shootBtn = document.getElementById('shootBtn');
+const scoreDisplay = document.getElementById('score');
+const permissionRequest = document.getElementById('permissionRequest');
+const permBtn = document.getElementById('permissionBtn');
+const fallbackBG = document.getElementById('fallback-bg');
+
+// ==== STARFIELD (2D, for perf. and simple effect) ====
+function genStarfield() {
+  starfield = [];
+  for (let i = 0; i < starCount; i++) {
+    starfield.push({
+      x: Math.random() * 2 - 1, // -1 to 1 (X in world viewspace)
+      y: Math.random() * 2 - 1,
+      z: Math.random() * 64 + 4,
+      size: Math.random() * 0.22 + 0.08,
+      speed: Math.random() * 6 + 3,
+      color: [
+        "#fff","#b0e1ff","#e3d8ff","#ddeeff","#bac9ff"
+      ][Math.floor(Math.random()*5)]
+    });
+  }
+}
+genStarfield();
+
+// ==== ASTEROID GENERATION ====
+function spawnAsteroid(force=false) {
+  // Prevent overpopulating
+  if (!force && asteroids.length >= asteroidSettings.max) return;
+  const radius = asteroidSettings.minRadius + Math.random() * (asteroidSettings.maxRadius - asteroidSettings.minRadius);
+  // Random XY offset from center in FOV
+  let angle = Math.random() * 2*Math.PI;
+  let dist = Math.random() * 7;
+  let x = Math.sin(angle) * dist;
+  let y = (Math.random() * 2 - 1) * 3.8;
+  let z = asteroidSettings.minZ + Math.random() * (asteroidSettings.maxZ - asteroidSettings.minZ);
+  // Give each asteroid a slow drift offset
+  asteroids.push({
+    x,y,z, radius,
+    dx: (Math.random() - 0.5) * 0.33,
+    dy: (Math.random() - 0.5) * 0.27,
+    dz: -asteroidSettings.baseSpeed * (0.93 + Math.random()*0.19),
+    rot: [Math.random()*2*Math.PI, Math.random()*2*Math.PI, Math.random()*2*Math.PI],
+    rotSpeed: [(Math.random()-0.5)*1.5, (Math.random()-0.5)*1.3, (Math.random()-0.5)*0.5],
+    colorTone: 0.56 + Math.random()*0.34
+  });
+}
+for(let i=0;i<5;i++)spawnAsteroid();
+
+// ==== 3D MATRIX/PROJECTION =====
+function deg2rad(a){return a*Math.PI/180;}
+function project3D(px, py, pz) {
+  // Camera is fixed at (0,0,0). Rotate by player view, then project.
+  // Apply rotation (rotX: pitch, rotY: yaw)
+  let x = px, y = py, z = pz;
+  // Rotate Y (yaw)
+  let cs = Math.cos(-player.rotY), sn = Math.sin(-player.rotY);
+  let x1 = cs*x - sn*z, z1 = sn*x + cs*z;
+  x = x1; z = z1;
+  // Rotate X (pitch)
+  cs = Math.cos(-player.rotX), sn = Math.sin(-player.rotX);
+  let y1 = cs*y - sn*z, z2 = sn*y + cs*z;
+  y = y1; z = z2;
+  if(z < Z_NEAR) return null; // behind camera
+  const fovAdj = Math.tan(deg2rad(FOV/2));
+  let pxlX = (x/(z*fovAdj))*0.5 + 0.5;
+  let pxlY = (y/(z*fovAdj))*0.5 + 0.5;
+  return {x: pxlX*width, y: pxlY*height, z};
+}
+
+// ==== DEVICE MOTION ====
+function handleTilt(beta, gamma) {
+  // On landscape: beta = up/down, gamma = left/right
+  if(!tiltAvailable)return;
+  // Remove calibration zero offset:
+  let dx = gamma - tiltOffsetX;
+  let dy = beta - tiltOffsetY;
+  // Smoothing:
+  player.rotY += ((dx * player.tiltSensitivity) - player.rotY)*player.smoothing;
+  player.rotX += ((dy * player.tiltSensitivity) - player.rotX)*player.smoothing;
+  // Clamp pitch to avoid over-tilt.
+  player.rotX = Math.max(-0.71,Math.min(0.71,player.rotX));
+  // Clamp yaw only slightly (turn left/right).
+  player.rotY = Math.max(-1.07,Math.min(1.07,player.rotY));
+}
+
+// For Compatibility: iOS requires permission
+function requestMotionPermissionIfNeeded() {
+  let needPerm = window.DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === 'function'
+  if (needPerm) {
+    permissionRequest.style.display = 'flex';
+    permBtn.onclick = function() {
+      DeviceMotionEvent.requestPermission().then(function(state){
+        if(state === 'granted') {
+          permissionRequest.style.display = 'none';
+          setupMotion();
+        }
+      })
+    }
+  } else {
+    setupMotion();
+  }
+}
+
+function setupMotion() {
+  tiltAvailable = true;
+  window.addEventListener('deviceorientation', function(e){
+    // We calibrate the initial orientation as "neutral"
+    if(typeof window.zeroedTilt === 'undefined') return; // Wait for calibrate!
+    handleTilt(e.beta, e.gamma);
+  }, true);
+
+  // On tap anywhere, allow user to calibrate (zero) neutral phone orientation
+  window.addEventListener('touchstart', function(){
+    if(!tiltAvailable) return;
+    calibrateTilt();
+  }, {once:true});
+}
+
+function calibrateTilt() {
+  // Use current value as zero
+  if(window.DeviceOrientationEvent){
+    window.addEventListener('deviceorientation',function eCalib(ev){
+      tiltOffsetX = ev.gamma||0; tiltOffsetY = ev.beta||0;
+      window.zeroedTilt = true;
+      window.removeEventListener('deviceorientation',eCalib,true);
+    }, true);
+  }
+}
+
+requestMotionPermissionIfNeeded();
+setTimeout(()=>calibrateTilt(),500);
+
+// ==== SHOOT BUTTON ====
+shootBtn.addEventListener('touchstart',fireLaser,{passive:false});
+shootBtn.addEventListener('mousedown',fireLaser);
+
+function fireLaser(e) {
+  if(!gameRunning)return;
+  if(e) e.preventDefault();
+  let now = performance.now()/1000;
+  if(now - lastLaserTime < player.laserCooldown) return;
+  lastLaserTime = now;
+  // Laser emitted from cockpit, aligned to current rotation
+  // (origin 0,0,0, direction = camera dir)
+  // We store rotational direction with cos/sin, but since it's always zeroed to camera
+  // just move straight ahead:
+  lasers.push({
+    x: 0, y: 0, z: 0.9,
+    vx: Math.sin(player.rotY)*Math.cos(player.rotX),
+    vy: Math.sin(player.rotX),
+    vz: Math.cos(player.rotY)*Math.cos(player.rotX),
+    t: now
+  });
+}
+
+// ==== LASER UPDATES ====
+function updateLasers(dt) {
+  for(let i=lasers.length-1; i>=0;i--) {
+    let l = lasers[i];
+    l.x += l.vx * laserSettings.speed * dt;
+    l.y += l.vy * laserSettings.speed * dt;
+    l.z += l.vz * laserSettings.speed * dt;
+
+    // Remove if too far from player
+    if(l.z<Z_NEAR || l.z > asteroidSettings.maxZ+6) {
+      lasers.splice(i,1);
+    }
+  }
+}
+
+// ==== ASTEROID UPDATES ====
+function updateAsteroids(dt) {
+  for(let i=asteroids.length-1; i>=0;i--) {
+    let a = asteroids[i];
+    a.x += a.dx * dt;
+    a.y += a.dy * dt;
+    a.z += a.dz * dt; // dz negative: toward player!
+
+    // Remove if passed player
+    if(a.z < Z_NEAR-1) {
+      asteroids.splice(i,1);
+    }
+    // TODO: add player collision for gameover?
+  }
+}
+
+// ==== COLLISION DETECTION AND EXPLOSIONS ====
+function checkCollisions() {
+  for(let ai=asteroids.length-1; ai>=0;ai--) {
+    const a=asteroids[ai];
+    for(let li=lasers.length-1; li>=0; li--) {
+      const l=lasers[li];
+      // 3D sphere/line segment test.
+      // We'll use closest approach: laser segment is of length laserSettings.length
+
+      let p1 = [l.x, l.y, l.z];
+      let p2 = [
+        l.x + l.vx*laserSettings.length,
+        l.y + l.vy*laserSettings.length,
+        l.z + l.vz*laserSettings.length
+      ];
+      let c = [a.x, a.y, a.z];
+      let d = segPointDist(p1,p2,c);
+
+      if(d < a.radius + laserSettings.radius) {
+        // Hit! Remove both, play explosion
+        explosions.push({x:a.x,y:a.y,z:a.z, t:performance.now()/1000, r:a.radius*2.1, frame:0, color:a.colorTone});
+        asteroids.splice(ai,1); lasers.splice(li,1);
+        score += Math.max(2, Math.floor(11*a.radius));
+        break;
+      }
+    }
+  }
+}
+// Returns closest distance from a 3D segment AB to point C
+function segPointDist(a,b,c) {
+  // a/b/c are [x,y,z]
+  let ab = [b[0]-a[0], b[1]-a[1], b[2]-a[2]];
+  let ac = [c[0]-a[0], c[1]-a[1], c[2]-a[2]];
+  let ab2 = ab[0]*ab[0]+ab[1]*ab[1]+ab[2]*ab[2];
+  let dot = ab[0]*ac[0] + ab[1]*ac[1] + ab[2]*ac[2];
+  let t = Math.max(0,Math.min(1,ab2!==0?dot/ab2:0));
+  let dx = a[0]+ab[0]*t - c[0];
+  let dy = a[1]+ab[1]*t - c[1];
+  let dz = a[2]+ab[2]*t - c[2];
+  return Math.sqrt(dx*dx+dy*dy+dz*dz);
+}
+
+// ==== EXPLOSIONS ====
+function updateExplosions(dt) {
+  const duration = 0.32;
+  for(let i=explosions.length-1;i>=0;i--) {
+    const ex = explosions[i];
+    ex.frame += dt;
+    if(ex.frame > duration) {
+      explosions.splice(i,1);
+    }
+  }
+}
+
+// ==== STARFIELD UPDATE ====
+function updateStarfield(dt) {
+  for(let star of starfield) {
+    // Move toward player
+    star.z -= star.speed * dt;
+    if(star.z < Z_NEAR*2) {
+      // Reset star: Push to far away in random place
+      star.x = Math.random()*2-1;
+      star.y = Math.random()*2-1;
+      star.z = Math.random()*60+30;
+      star.size = Math.random()*0.22+0.09;
+    }
+  }
+}
+
+// ==== GAME LOOP ====
+let lastAsteroidTime = performance.now();
+function gameLoop(now) {
+  if(!gameRunning) return;
+
+  const sec = now/1000;
+  if (!lastFrameTime) lastFrameTime = sec;
+  let dt = Math.min(0.045, sec-lastFrameTime);
+  lastFrameTime = sec;
+
+  // Update positions
+  updateLasers(dt);
+  updateAsteroids(dt);
+  updateStarfield(dt);
+  updateExplosions(dt);
+  checkCollisions();
+
+  // Spawn asteroids at intervals
+  if(now - lastAsteroidTime > asteroidSettings.spawnInterval) {
+    lastAsteroidTime = now;
+    if(asteroids.length < asteroidSettings.max) spawnAsteroid();
+  }
+
+  // ---- RENDER ----
+  ctx.clearRect(0,0,width,height);
+
+  renderStarfield();
+  renderCockpit();
+  renderAsteroids();
+  renderLasers();
+  renderExplosions();
+
+  // Draw soft vignette overlay
+  let grd=ctx.createRadialGradient(width/2, height/2, Math.min(width,height)*0.16,
+            width/2, height/2, Math.max(width,height)*0.62);
+  grd.addColorStop(0,"rgba(0,0,0,0)");
+  grd.addColorStop(1,"rgba(0,0,0,0.35)");
+  ctx.fillStyle=grd;
+  ctx.fillRect(0,0,width,height);
+
+  // Score
+  scoreDisplay.innerText = score;
+
+  requestAnimationFrame(gameLoop);
+}
+requestAnimationFrame(gameLoop);
+
+// ====  RENDERING  ====
+
+function renderStarfield() {
+  // Simple fast 3D->2D projection
+  for(let s of starfield) {
+    let proj = project3D(s.x,s.y,s.z);
+    if(!proj) continue;
+    let size = s.size / (0.35+proj.z*0.06);
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = s.color;
+    ctx.beginPath();
+    ctx.arc(proj.x, proj.y, size, 0, 2*Math.PI);
+    ctx.fill();
+  }
+}
+
+// ---- RENDER LASERS ----
+function renderLasers() {
+  for(let l of lasers) {
+    let p1 = project3D(l.x, l.y, l.z);
+    let p2 = project3D(
+      l.x+l.vx*laserSettings.length,
+      l.y+l.vy*laserSettings.length,
+      l.z+l.vz*laserSettings.length
+    );
+    if(!p1 || !p2) continue;
+    // Gradient laser!
+    let grad = ctx.createLinearGradient(p1.x, p1.y, p2.x, p2.y);
+    grad.addColorStop(0,"#fff");
+    grad.addColorStop(0.4,"#71e7ff");
+    grad.addColorStop(1,"#1df0e3");
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = Math.max(2, width*0.015/(0.85+p1.z*0.20));
+    ctx.beginPath();
+    ctx.moveTo(p1.x,p1.y);
+    ctx.lineTo(p2.x,p2.y);
+    ctx.stroke();
+    // Soft glow
+    ctx.globalAlpha = 0.21 + Math.random()*0.13;
+    ctx.beginPath();
+    ctx.arc(p1.x,p1.y, ctx.lineWidth*1.4,0,2*Math.PI);
+    ctx.fillStyle = "#13fafd";
+    ctx.fill();
+    ctx.globalAlpha=1;
+  }
+}
+
+// ---- RENDER ASTEROIDS (basic 3D lighting) ----
+function renderAsteroids() {
+  for(let a of asteroids) {
+    let proj = project3D(a.x,a.y,a.z);
+    if(!proj) continue;
+    let rad = a.radius / (0.35+proj.z*0.09) * width/23;
+    // Paint a lumpy-shaded asteroid using basic spheres + Perlin-like bumps
+    ctx.save();
+    ctx.translate(proj.x, proj.y);
+    // Flat base shade
+    let lit = Math.max(0.11, 0.41 + 0.48*(a.x/22 + a.y/21 + 0.53*a.y)*Math.cos(performance.now()/310-a.x));
+    ctx.fillStyle = `rgba(${Math.floor(88*a.colorTone+55)},${Math.floor(57*a.colorTone+37)},${Math.floor(53*a.colorTone+19)},0.98)`;
+    ctx.beginPath();
+    ctx.arc(0,0,rad,0,2*Math.PI);
+    ctx.fill();
+    // Shading: Draw "craters"
+    ctx.globalAlpha = 0.19;
+    for(let c=0;c<9;c++) {
+      let ang = c*2*Math.PI/9 + a.rot[0];
+      let rCrater = rad*(0.23+Math.random()*0.23);
+      let dx = Math.cos(ang)*rad*0.61, dy = Math.sin(ang)*rad*0.47;
+      ctx.beginPath();
+      ctx.arc(dx, dy, rCrater, 0, 2*Math.PI);
+      ctx.fillStyle = "#181416";
+      ctx.fill();
+    }
+    ctx.globalAlpha=1;
+
+    // Specular "sun" highlight
+    let hlx = Math.cos(a.rot[1])*rad*0.33, hly = Math.sin(a.rot[2])*rad*0.21;
+    let grd = ctx.createRadialGradient(hlx,hly,rad*0.08, hlx,hly,rad*0.48);
+    grd.addColorStop(0, "rgba(250,245,255,0.19)");
+    grd.addColorStop(1, "rgba(255,255,255,0.03)");
+    ctx.fillStyle = grd;
+    ctx.beginPath();
+    ctx.arc(hlx,hly,rad*0.48,0,2*Math.PI);
+    ctx.fill();
+
+    ctx.restore();
+
+    // Animate asteroid rotation
+    a.rot[0] += a.rotSpeed[0]*0.011;
+    a.rot[1] += a.rotSpeed[1]*0.017;
+    a.rot[2] += a.rotSpeed[2]*0.024;
+  }
+}
+
+// ---- RENDER EXPLOSIONS ----
+function renderExplosions() {
+  for(let ex of explosions) {
+    let proj = project3D(ex.x,ex.y,ex.z);
+    if(!proj) continue;
+    let rad = ex.r/(0.35+proj.z*0.08) * width/23;
+    let p = Math.min(1, ex.frame/0.33);
+    let alpha = 0.84*(1-p);
+
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    let grd = ctx.createRadialGradient(0,0,0,0,0,rad*(0.92+p*0.2));
+    grd.addColorStop(0,"#ffe");
+    grd.addColorStop(0.16,"#ffd595");
+    grd.addColorStop(0.42,`rgba(${220+ex.color*30},${120+ex.color*30},${33+ex.color*50},0.96)`);
+    grd.addColorStop(0.88,"rgba(150,36,8,0)");
+    ctx.translate(proj.x, proj.y);
+    ctx.beginPath();
+    ctx.arc(0,0,rad*(0.96+p*0.22),0,2*Math.PI);
+    ctx.fillStyle = grd;
+    ctx.fill();
+    ctx.restore();
+    ctx.globalAlpha=1;
+  }
+}
+
+// ---- COCKPIT RENDER ----
+function renderCockpit() {
+  // Use 2D shapes for elegance: glass, side pillars, HUD hints
+  ctx.save();
+  ctx.globalAlpha = 0.95;
+  // Cockpit foreground
+  let w = width, h = height;
+  let fwh = w/34, fh = h/17;
+  // Draw left frame/pillar:
+  ctx.beginPath();
+  ctx.moveTo(w*0.16, h-fh*0.7);
+  ctx.lineTo(w*0.21, h-fh*6.2);
+  ctx.lineTo(w*0.28, h-fh*17.4);
+  ctx.lineTo(w*0.18, h-fh*14.3);
+  ctx.lineTo(w*0.128, h-fh*2.6);
+  ctx.lineTo(w*0.07, h-fh*0.7);
+  ctx.lineTo(w*0.144, h-fh*0.18);
+  ctx.closePath();
+  ctx.fillStyle="rgba(25,42,84,0.32)";
+  ctx.fill();
+
+  // Right frame/pillar
+  ctx.beginPath();
+  ctx.moveTo(w*0.84, h-fh*0.7);
+  ctx.lineTo(w*0.79, h-fh*6.2);
+  ctx.lineTo(w*0.72, h-fh*17.4);
+  ctx.lineTo(w*0.82, h-fh*14.3);
+  ctx.lineTo(w*0.872, h-fh*2.6);
+  ctx.lineTo(w*0.93, h-fh*0.7);
+  ctx.lineTo(w*0.856, h-fh*0.18);
+  ctx.closePath();
+  ctx.fillStyle="rgba(25,42,84,0.32)";
+  ctx.fill();
+
+  // Main window rim
+  ctx.beginPath();
+  ctx.moveTo(w*0.128, h-fh*2.6);
+  ctx.lineTo(w*0.45, h-fh*5.5);
+  ctx.lineTo(w*0.55, h-fh*5.5);
+  ctx.lineTo(w*0.872, h-fh*2.6);
+  ctx.lineWidth = 5;
+  ctx.strokeStyle="rgba(33,194,255,0.22)";
+  ctx.stroke();
+
+  // Dashboard/HUD panel
+  let dashY = h-fh*0.7;
+  ctx.beginPath();
+  ctx.moveTo(w*0.144, dashY);
+  ctx.quadraticCurveTo(w*0.5, h-fh*0.25, w*0.856, dashY);
+  ctx.lineTo(w*0.81, h);
+  ctx.lineTo(w*0.19, h);
+  ctx.closePath();
+  ctx.fillStyle="rgba(16,29,37,0.66)";
+  ctx.fill();
+
+  // Central HUD crosshair
+  ctx.globalAlpha=0.49;
+  let cx=w/2, cy=h/2;
+  ctx.strokeStyle = "#68fff7";
+  ctx.lineWidth = 1.4;
+  ctx.beginPath();
+  ctx.arc(cx,cy,10,0,2*Math.PI);
+  ctx.moveTo(cx-18,cy); ctx.lineTo(cx-5,cy);
+  ctx.moveTo(cx+5,cy); ctx.lineTo(cx+18,cy);
+  ctx.moveTo(cx,cy-18); ctx.lineTo(cx,cy-5);
+  ctx.moveTo(cx,cy+5); ctx.lineTo(cx,cy+18);
+  ctx.stroke();
+
+  ctx.globalAlpha=1;
+  ctx.restore();
+}
+
+// ============ GAME OVER/PAUSE/FOCUS HANDLING =============
+document.addEventListener("visibilitychange",function(){
+  if(document.hidden) { gameRunning=false; } else {
+    gameRunning = true; lastFrameTime = undefined; requestAnimationFrame(gameLoop);
+  }
+});
+window.addEventListener('resize',()=>{
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+// ============ MOBILE SAFARI FIX FOR 2D CONTROLS =============
+canvas.addEventListener('touchmove',function(e){e.preventDefault();},{passive:false});
+canvas.addEventListener('touchstart',function(e){e.preventDefault();},{passive:false});
+shootBtn.addEventListener('touchmove', function(e){e.preventDefault();},{passive:false});
+
+// Fallback "star" background show if canvas 2D not supported
+if(!ctx) fallbackBG.style.display='block';
+
+/* DONE! All in one file. Enjoy! */
+</script>
+</body>
+</html>
