@@ -2,661 +2,290 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Mobile FP Space Shooter</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+  <title>3D Space Shooter</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
   <style>
-    html, body { margin:0; padding:0; width:100vw; height:100vh;
-      background:#0a172c; overflow:hidden; touch-action:none;
-    }
-    #canvas {
-      position:fixed; top:0; left:0;
-      width:100vw; height:100vh;
-      z-index:0; pointer-events:none;
-    }
-    #ui {
-      position:fixed; top:0; left:0;
-      width:100vw; height:100vh;
-      z-index:7; pointer-events:none;
-      font-family:"Orbitron",monospace,Arial,sans-serif;
+    html,body { margin:0; padding:0; width:100vw; height:100vh; overflow:hidden; background:#0a172c; }
+    canvas { display:block; }
+    #ui { position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; }
+    #crosshair {
+      position:absolute; top:50%; left:50%;
+      width:30px; height:30px;
+      margin:-15px 0 0 -15px;
+      border:2px solid #8cfaff; border-radius:50%;
+      pointer-events:none;
     }
     #shoot {
-      position:fixed; right:7vw; bottom:12vh;
-      width:22vw; height:22vw;
-      min-width:70px; min-height:70px;
-      max-width:128px; max-height:128px;
+      position:absolute; right:7vw; bottom:12vh;
+      width:22vw; height:22vw; min-width:60px; min-height:60px;
       background:linear-gradient(135deg,#27b2e7 65%,#0a2e4e 95%);
-      border-radius:50%; border:2px solid #9cfffc;
-      font-size:1.3em; color:#f5ffff; letter-spacing:.1em;
-      font-weight:bold; text-shadow:0 2px 12px #3afcff96;
-      box-shadow:0 1px 16px #42e5f755;
-      pointer-events:auto; outline:none; opacity:.88;
+      border:2px solid #9cfffc; border-radius:50%;
+      color:#fff; font:bold 1.2em Orbitron,monospace;
+      pointer-events:auto; cursor:pointer;
+      text-shadow:0 2px 8px #3afcff80;
     }
-    #shoot:active { opacity:1; background:#9aecff }
+    #shoot:active { background:#9aecff; }
     #overlay,#gameover,#calibrate {
-      position:fixed; top:0; left:0;
-      width:100vw; height:100vh;
-      z-index:9; pointer-events:auto;
-      background:rgba(10,24,44,.96);
-      display:flex; align-items:center; justify-content:center;
-      flex-direction:column;
-      font-family:"Orbitron",monospace,Arial,sans-serif;
-      color:#e4ffff; text-align:center;
-      user-select:none; -webkit-user-select:none;
+      position:absolute; top:0; left:0; width:100%; height:100%;
+      background:rgba(10,24,44, .96); color:#e4ffff;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      font:1.15em Orbitron,monospace; text-align:center;
+      user-select:none; pointer-events:auto; display:none;
     }
-    #overlay,#gameover,#calibrate{ display:none }
-    .overlay-btn {
-      background:#2beafc; color:#fff;
-      font-size:1.1em; padding:.5em 2em;
-      border:0; border-radius:.4em; margin-top:1em;
-      box-shadow:0 0 16px #43f3ff80; cursor:pointer;
+    .btn {
+      margin-top:1em; padding:.6em 2em; border:none; border-radius:.4em;
+      background:#2beafc; color:#000; font:1.1em Orbitron,monospace;
+      cursor:pointer; box-shadow:0 0 16px #43f3ff80;
     }
     .info {
-      position:fixed; left:7vw; bottom:8vw;
-      font-size:.93em; color:#95e8ff67;
-      pointer-events:none; z-index:8;
+      position:absolute; left:7vw; bottom:8vw;
+      color:#95e8ff67; pointer-events:none;
       text-shadow:0 2px 9px #1cf6ff40;
     }
   </style>
 </head>
 <body>
-  <canvas id="canvas"></canvas>
+  <canvas id="three-canvas"></canvas>
   <div id="ui">
+    <div id="crosshair"></div>
     <button id="shoot">FIRE</button>
     <div class="info" id="helpInfo"></div>
   </div>
   <div id="overlay">
-    <h2 style="font-size:2em;color:#5eeccf;">SPACE SHOOTER</h2>
-    <div style="margin:.9em 0 1.6em 0;font-size:1.15em;">
-      <b>Enable Motion on your Device</b><br>
-      Tap to allow tilt–controls.<br>
-      Hold device as you want to aim.<br>
-    </div>
-    <button class="overlay-btn" id="permBtn">ENABLE MOTION</button>
+    <h2 style="color:#5eeccf">SPACE SHOOTER</h2>
+    <p><b>Enable Motion Controls</b><br>Tap below to allow tilt aiming.</p>
+    <button class="btn" id="permBtn">ALLOW MOTION</button>
   </div>
   <div id="calibrate">
-    <h3 style="font-size:1.5em;color:#69f2e9;">Calibrate</h3>
-    <div style="margin:.8em 0 1.2em 0;">
-      Hold device FORWARD as you play.<br>
-      <b>Tap to calibrate zero point.</b>
-    </div>
-    <button class="overlay-btn" id="calibBtn">Set Forward</button>
+    <h3 style="color:#69f2e9">CALIBRATE</h3>
+    <p>Hold device level, then tap to set your “forward”.</p>
+    <button class="btn" id="calibBtn">SET FORWARD</button>
   </div>
   <div id="gameover">
-    <div style="font-size:2.4em;color:#ff8f98;text-shadow:0 0 20px #fff3;">
-      GAME OVER
-    </div>
-    <div id="finalscore" style="font-size:1.2em;margin:.7em 0 1.5em 0;"></div>
-    <button class="overlay-btn" id="restartBtn">TAP TO RESTART</button>
+    <h1 style="color:#ff8f98; text-shadow:0 0 20px #fff3">GAME OVER</h1>
+    <p id="finalscore"></p>
+    <button class="btn" id="restartBtn">RESTART</button>
   </div>
 
+  <!-- Three.js -->
+  <script src="https://unpkg.com/three@0.149.0/build/three.min.js"></script>
   <script>
-  "use strict";
+  (() => {
+    // —— Config ——  
+    const AST_COUNT    = 30;
+    const AST_MIN_DIST = 1000;
+    const AST_MAX_DIST = 4000;
+    const AST_MIN_SPEED= 100;
+    const AST_MAX_SPEED= 300;
+    const FOV          = 75;
+    const NEAR         = 1;
+    const FAR          = 5000;
+    const SENS         = 0.7; // tilt sensitivity
 
-  // — CONFIG —
-  const CFG = {
-    FOV:62, SENS:1,
-    SCENED:4000, // viewable depth
-    SHIPRAD:34, SHIPINERTIA:.12, SHIP_Y_BIAS:.11,
-    LASER_COOLDOWN:.18, LASER_SPEED:1700,
-    STARS:84,
-    ASTEROIDS:7, AST_BIRATE:1.13,
-    AST_MINZ:2400, AST_MAXZ:4600,      // spawn far away
-    AST_MINR:32, AST_MAXR:66,
-    AST_MINSPD:220, AST_MAXSPD:350,   // slower speed
-    AST_COLORS:['#8cf7ff','#cab9ad','#aeaedb','#abf1e1','#eed7ba','#efacb0','#b9e4e8'],
-    EXPLODE_FRAMES:18, PLAYER_HEALTH:4,
-    COCKPIT_H:.17, DODGE_JITTER:8,
-    SFX_VOL:.21
-  };
+    // —— State ——  
+    let scene, camera, renderer, raycaster;
+    let asteroids = [], lastTime = 0;
+    let audioCtx;
+    let deviceOk=false, calibrating=false, gameover=false;
+    let orientationZero={beta:0,gamma:0}, lastRaw={beta:0,gamma:0};
+    let score=0;
 
-  // — GLOBALS & DOM —
-  let canvas, ctx, DPR, W, H, cx, cy, minWH;
-  let stars=[], asteroids=[], lasers=[], explosions=[];
-  let game, player, t0, tPrev;
-  let deviceOk=false, calibrating=false, gameover=false;
-  let orientationZero={beta:0,gamma:0}, shootDown=false;
-  let audioCtx=null, helpTimeout;
+    // —— DOM ——  
+    const canvas   = document.getElementById('three-canvas');
+    const overlay  = document.getElementById('overlay');
+    const permBtn  = document.getElementById('permBtn');
+    const calibUI  = document.getElementById('calibrate');
+    const calibBtn = document.getElementById('calibBtn');
+    const gameoverUI = document.getElementById('gameover');
+    const finalscore = document.getElementById('finalscore');
+    const restartBtn = document.getElementById('restartBtn');
+    const shootBtn = document.getElementById('shoot');
+    const helpInfo = document.getElementById('helpInfo');
 
-  const UI = {
-    overlay:   document.getElementById('overlay'),
-    permBtn:   document.getElementById('permBtn'),
-    calibrate: document.getElementById('calibrate'),
-    calibBtn:  document.getElementById('calibBtn'),
-    gameover:  document.getElementById('gameover'),
-    finalscore:document.getElementById('finalscore'),
-    restartBtn:document.getElementById('restartBtn'),
-    shoot:     document.getElementById('shoot'),
-    help:      document.getElementById('helpInfo')
-  };
+    // —— Init Three.js ——  
+    function initThree(){
+      renderer = new THREE.WebGLRenderer({canvas,antialias:true});
+      renderer.setSize(window.innerWidth,window.innerHeight);
+      scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0x0a172c, 0.00025);
 
-  // — PERMISSION & ORIENTATION —
-  function requireDeviceMotionPermission(){
-    if(typeof DeviceOrientationEvent==='undefined'){
-      UI.overlay.style.display='flex';
-      UI.permBtn.innerText='Not supported';
-      UI.permBtn.disabled=true;
-      return;
-    }
-    if(typeof DeviceOrientationEvent.requestPermission==='function'){
-      UI.overlay.style.display='flex';
-      UI.permBtn.onclick = ()=>{
-        DeviceOrientationEvent.requestPermission().then(res=>{
-          if(res==='granted'){
-            UI.overlay.style.display='none';
-            deviceOk=true;
-            beginCalibration();
-          }
-        }).catch(console.error);
-      };
-    } else {
-      deviceOk=true;
-      UI.overlay.style.display='none';
-      beginCalibration();
-    }
-  }
+      camera = new THREE.PerspectiveCamera(FOV,window.innerWidth/window.innerHeight,NEAR,FAR);
+      camera.position.set(0,0,0);
 
-  window.addEventListener('deviceorientation', evt=>{
-    player.lastRaw.beta  = evt.beta  || 0;
-    player.lastRaw.gamma = evt.gamma || 0;
-    player.lastRaw.alpha = evt.alpha || 0;
-  });
+      // lights
+      scene.add(new THREE.AmbientLight(0x888888));
+      let dir = new THREE.DirectionalLight(0xffffff,0.5);
+      dir.position.set(1,1,1);
+      scene.add(dir);
 
-  function beginCalibration(){
-    calibrating=true;
-    UI.calibrate.style.display='flex';
-  }
-  UI.calibBtn.onclick = ()=>{
-    orientationZero.beta  = player.lastRaw.beta;
-    orientationZero.gamma = player.lastRaw.gamma;
-    calibrating=false;
-    UI.calibrate.style.display='none';
-  };
+      raycaster = new THREE.Raycaster();
 
-  // — INITIALIZE GAME STATE —
-  function initGame(){
-    game = {
-      running:true, score:0, health:CFG.PLAYER_HEALTH,
-      lastAst:0, asteroidRate:CFG.AST_BIRATE,
-      tLaser:-9, inShake:0
-    };
-    player = {
-      x:0,y:0,z:0,
-      cross:{x:0,y:0},
-      lastRaw:{beta:0,gamma:0,alpha:0}
-    };
-    stars=[]; asteroids=[]; lasers=[]; explosions=[];
-
-    for(let i=0;i<CFG.STARS;i++){
-      stars.push({
-        x:(Math.random()-.5)*1.8*W,
-        y:(Math.random()-.5)*1.5*H,
-        z:.22+.78*Math.random(),
-        r:Math.random()*1.7+.7,
-        c:Math.random()<.91?'#cceeff':'#6fddff'
-      });
-    }
-  }
-
-  // — MAIN LOOP & PHYSICS —
-  function loop(ts){
-    if(!t0) t0=tPrev=ts/1000;
-    const t = ts/1000, dt = Math.min(1/30, t - tPrev);
-    tPrev = t;
-
-    resizeIfNeeded();
-    if(!deviceOk||calibrating){ requestAnimationFrame(loop); return; }
-    if(!game.running){ render(); requestAnimationFrame(loop); return; }
-
-    // tilt → ship pos
-    let dB = player.lastRaw.beta - orientationZero.beta;
-    let dG = player.lastRaw.gamma- orientationZero.gamma;
-    dB = clamp(dB,-34,34);
-    dG = clamp(dG,-38,38);
-    const tarY = -dB/34*(H*.35),
-          tarX =  dG/38*(W*.37);
-    player.x += (tarX-player.x)*CFG.SHIPINERTIA;
-    player.y += (tarY-player.y)*CFG.SHIPINERTIA;
-    player.x = clamp(player.x,-W*.39,W*.39);
-    player.y = clamp(player.y,-H*.28,H*.22);
-    player.cross.x += (tarX-player.cross.x)*.24 + (Math.random()-.5)*.3;
-    player.cross.y += (tarY-player.cross.y)*.24 + (Math.random()-.5)*.3;
-
-    // fire laser
-    if(shootDown && t>game.tLaser+CFG.LASER_COOLDOWN){
-      fireLaser(); game.tLaser = t;
-    }
-
-    // spawn asteroids
-    game.lastAst += dt;
-    const limit = CFG.ASTEROIDS + Math.floor(game.score/24);
-    while(asteroids.length<limit && game.lastAst>1/game.asteroidRate){
-      spawnAsteroid();
-      game.lastAst -= 1/game.asteroidRate;
-    }
-
-    // update asteroids
-    for(let i=asteroids.length-1;i>=0;--i){
-      let a=asteroids[i];
-      a.z -= a.speed*dt; a.x += a.sx*dt; a.y += a.sy*dt;
-      if(a.z<0) asteroids.splice(i,1);
-    }
-
-    // update lasers
-    for(let i=lasers.length-1;i>=0;--i){
-      let l=lasers[i];
-      l.z += l.dz*dt; l.x += l.dx*dt; l.y += l.dy*dt;
-      if(l.z>CFG.SCENED) lasers.splice(i,1);
-    }
-
-    // update explosions
-    for(let i=explosions.length-1;i>=0;--i){
-      let e=explosions[i];
-      e.t++;
-      if(e.t>CFG.EXPLODE_FRAMES) explosions.splice(i,1);
-    }
-
-    // laser–asteroid collision
-    for(let li=lasers.length-1;li>=0;--li){
-      let l=lasers[li], hit=false;
-      for(let ai=asteroids.length-1;ai>=0;--ai){
-        let a=asteroids[ai];
-        let dx=a.x-l.x, dy=a.y-l.y, dz=a.z-l.z;
-        if(Math.hypot(dx,dy,dz)<a.r*0.94){
-          explosions.push({x:a.x,y:a.y,z:a.z,c:a.c,r:a.r,t:0});
-          playSfx('explode');
-          asteroids.splice(ai,1);
-          lasers.splice(li,1);
-          game.score += 6 + Math.round(a.r*0.5);
-          hit=true; break;
-        }
+      // asteroids
+      for(let i=0;i<AST_COUNT;i++){
+        let a = createAsteroid();
+        asteroids.push(a);
+        scene.add(a.mesh);
       }
-      if(hit) break;
+
+      window.addEventListener('resize', onResize);
     }
 
-    // asteroid–ship collision
-    for(let ai=asteroids.length-1;ai>=0;--ai){
-      let a=asteroids[ai];
-      let dx=a.x-player.x, dy=a.y-player.y, dz=a.z;
-      if(dz<CFG.SHIPRAD*1.3 && Math.hypot(dx,dy,dz)<a.r*0.7+CFG.SHIPRAD*0.48){
-        explosions.push({x:a.x,y:a.y,z:a.z,c:a.c,r:a.r*1.4,t:0});
-        playSfx('hit');
-        asteroids.splice(ai,1);
-        game.health--; game.inShake=CFG.DODGE_JITTER;
-        if(game.health<=0) doGameOver();
-      }
-    }
-
-    if(game.inShake>0) game.inShake--;
-
-    render();
-    requestAnimationFrame(loop);
-  }
-
-  // — RENDERING —
-  function render(){
-    ctx.clearRect(0,0,W,H);
-    renderStars();
-    renderAsteroids();
-    renderLasers();
-    renderExplosions();
-    renderCockpit();
-    renderHud();
-  }
-
-  function camProject(x,y,z){
-    const fov=CFG.FOV*Math.PI/180,
-          focal=cy/Math.tan(fov/2);
-    return {
-      x: cx + x*(focal/(z+1)),
-      y: cy + CFG.SHIP_Y_BIAS*H + y*(focal/(z+1))
-    };
-  }
-  function sceneToCam(x,y,z){
-    return { x:x-player.x, y:y-player.y, z:z };
-  }
-
-  function renderStars(){
-    for(let s of stars){
-      let sx = cx + s.x*s.z - player.x*s.z*0.15,
-          sy = cy + s.y*s.z + CFG.SHIP_Y_BIAS*H - player.y*s.z*0.11;
-      ctx.globalAlpha = 0.30 * s.z;
-      ctx.beginPath();
-      ctx.arc(sx,sy,s.r,0,2*Math.PI);
-      ctx.fillStyle = s.c; ctx.fill();
-    }
-    ctx.globalAlpha = 1;
-  }
-
-  function renderAsteroids(){
-    for(let a of asteroids){
-      let c = sceneToCam(a.x,a.y,a.z),
-          pt=camProject(c.x,c.y,c.z),
-          sz=a.r*Math.max(0.20, cx/(c.z+1)/350);
-
-      // textured radial gradient
-      let g = ctx.createRadialGradient(
-        pt.x - sz*0.3, pt.y - sz*0.3, sz*0.1,
-        pt.x, pt.y, sz
-      );
-      g.addColorStop(0, shade(a.c, 0.5));
-      g.addColorStop(0.3, a.c);
-      g.addColorStop(0.7, shade(a.c, -0.3));
-      g.addColorStop(1, "rgba(13,25,62,0.8)");
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(pt.x,pt.y,sz,0,2*Math.PI);
-      ctx.fillStyle = g;
-      ctx.shadowColor = shade(a.c, 0.1);
-      ctx.shadowBlur = 12 + sz*0.5;
-      ctx.fill();
-      ctx.restore();
-
-      // equatorial band for 3D look
-      ctx.save();
-      ctx.beginPath();
-      ctx.ellipse(pt.x, pt.y, sz*0.8, sz*0.2, Math.PI/4, 0, 2*Math.PI);
-      ctx.strokeStyle = "rgba(0,0,0,0.2)";
-      ctx.lineWidth = sz*0.05;
-      ctx.stroke();
-      ctx.restore();
-
-      // optional sci‑fi marks
-      if(Math.random()<0.18){
-        ctx.beginPath();
-        ctx.arc(
-          pt.x + sz*0.6*(Math.random()-.5),
-          pt.y + sz*0.6*(Math.random()-.5),
-          sz*rand(0.13,0.24), 0, 2*Math.PI
+    // —— Create one low‑poly, noisy asteroid ——  
+    function createAsteroid(){
+      let radius = THREE.MathUtils.randFloat(20,60);
+      let geom = new THREE.IcosahedronGeometry(radius,1);
+      let pos  = geom.attributes.position;
+      for(let i=0;i<pos.count;i++){
+        let off = (Math.random()-0.5)*radius*0.3;
+        pos.setXYZ(i,
+          pos.getX(i)+off,
+          pos.getY(i)+off,
+          pos.getZ(i)+off
         );
-        ctx.fillStyle = Math.random()<0.5 ? "#fff9" : "#eefb";
-        ctx.globalAlpha = 0.14;
-        ctx.fill();
-        ctx.globalAlpha = 1;
+      }
+      geom.computeVertexNormals();
+      let mat = new THREE.MeshStandardMaterial({
+        color: new THREE.Color(`hsl(${Math.random()*360},50%,75%)`),
+        flatShading: true
+      });
+      let mesh = new THREE.Mesh(geom, mat);
+
+      let dist = THREE.MathUtils.randFloat(AST_MIN_DIST,AST_MAX_DIST);
+      mesh.position.set(
+        (Math.random()-0.5)*800,
+        (Math.random()-0.5)*500,
+        -dist
+      );
+      let speed = THREE.MathUtils.randFloat(AST_MIN_SPEED,AST_MAX_SPEED);
+      return { mesh, speed, radius };
+    }
+
+    // —— Main render/physics loop ——  
+    function animate(ts){
+      if(!lastTime) lastTime = ts;
+      let dt = (ts - lastTime)/1000;
+      lastTime = ts;
+
+      // apply device tilt → camera rotation
+      camera.rotation.x = THREE.MathUtils.degToRad((lastRaw.beta - orientationZero.beta)*SENS);
+      camera.rotation.y = THREE.MathUtils.degToRad((lastRaw.gamma- orientationZero.gamma)*SENS);
+
+      // move asteroids
+      asteroids.forEach(a => {
+        a.mesh.position.z += a.speed * dt;
+
+        // collision?
+        let camPos = new THREE.Vector3();
+        camera.getWorldPosition(camPos);
+        let dist = a.mesh.position.distanceTo(camPos);
+        if(a.mesh.position.z > camera.position.z && dist < a.radius*0.5){
+          return doGameOver();
+        }
+
+        // respawn
+        if(a.mesh.position.z > 10){
+          let d = THREE.MathUtils.randFloat(AST_MIN_DIST, AST_MAX_DIST);
+          a.mesh.position.z = -d;
+          a.mesh.position.x = (Math.random()-0.5)*800;
+          a.mesh.position.y = (Math.random()-0.5)*500;
+          a.speed = THREE.MathUtils.randFloat(AST_MIN_SPEED,AST_MAX_SPEED);
+        }
+      });
+
+      renderer.render(scene, camera);
+      if(!gameover) requestAnimationFrame(animate);
+    }
+
+    // —— Shooting (raycast from center) ——  
+    shootBtn.addEventListener('click',()=>{
+      let mouse = new THREE.Vector2(0,0);
+      raycaster.setFromCamera(mouse, camera);
+      let hits = raycaster.intersectObjects( asteroids.map(a=>a.mesh) );
+      if(hits.length){
+        let m = hits[0].object;
+        // remove hit asteroid
+        asteroids = asteroids.filter(a=>a.mesh!==m);
+        scene.remove(m);
+        score += 1;
+      }
+    });
+
+    // —— Game over & restart ——  
+    function doGameOver(){
+      gameover = true;
+      finalscore.textContent = `SCORE: ${score}`;
+      setTimeout(()=> gameoverUI.style.display = 'flex', 200);
+    }
+    restartBtn.addEventListener('click', ()=>{
+      // reset
+      scene.clear();
+      asteroids = [];
+      score = 0;
+      initThree();
+      gameoverUI.style.display = 'none';
+      lastTime = 0;
+      requestAnimationFrame(animate);
+    });
+
+    // —— Device motion permission & calibration ——  
+    function requireMotion(){
+      if(typeof DeviceOrientationEvent === 'undefined'){
+        overlay.style.display = 'flex';
+        permBtn.textContent = 'Unsupported';
+        permBtn.disabled = true;
+        return;
+      }
+      if(DeviceOrientationEvent.requestPermission){
+        overlay.style.display = 'flex';
+        permBtn.onclick = ()=> {
+          DeviceOrientationEvent.requestPermission()
+            .then(res=>{ if(res==='granted'){
+              overlay.style.display='none';
+              deviceOk = true;
+              startGame();
+            }})
+            .catch(console.error);
+        };
+      } else {
+        deviceOk = true;
+        overlay.style.display='none';
+        startGame();
       }
     }
-  }
+    window.addEventListener('deviceorientation', evt=>{
+      lastRaw.beta  = evt.beta  || 0;
+      lastRaw.gamma = evt.gamma || 0;
+    });
 
-  function renderLasers(){
-    for(let l of lasers){
-      let c0=sceneToCam(l.x,l.y,l.z),
-          c1=sceneToCam(l.x+l.dx*0.11, l.y+l.dy*0.11, l.z+l.dz*0.11),
-          p0=camProject(c0.x,c0.y,c0.z),
-          p1=camProject(c1.x,c1.y,c1.z);
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(p0.x,p0.y);
-      ctx.lineTo(p1.x,p1.y);
-      ctx.lineWidth = Math.max(2.2, 8/(l.z/330+1.2));
-      ctx.strokeStyle = "#befcff";
-      ctx.shadowColor = "#23ffff"; ctx.shadowBlur = 12;
-      ctx.globalAlpha = 0.83;
-      ctx.stroke();
-
-      ctx.beginPath();
-      ctx.arc(
-        p0.x, p0.y,
-        Math.max(1.9, 4/(l.z/300+1.2)),
-        0,2*Math.PI
-      );
-      ctx.fillStyle = "#fff"; ctx.globalAlpha = 0.39; ctx.fill();
-      ctx.restore(); ctx.globalAlpha = 1;
+    function startGame(){
+      calibrating = true;
+      calibUI.style.display = 'flex';
     }
-  }
+    calibBtn.onclick = ()=>{
+      orientationZero.beta  = lastRaw.beta;
+      orientationZero.gamma = lastRaw.gamma;
+      calibrating = false;
+      calibUI.style.display = 'none';
+      showHelp("Tilt to aim • Tap FIRE to shoot", 3000);
+      requestAnimationFrame(animate);
+    };
 
-  function renderExplosions(){
-    for(let e of explosions){
-      let c=sceneToCam(e.x,e.y,e.z),
-          pt=camProject(c.x,c.y,c.z),
-          fr=e.t/CFG.EXPLODE_FRAMES,
-          sz=e.r*(1+fr*1.3);
-
-      let g = ctx.createRadialGradient(pt.x,pt.y,0.2,pt.x,pt.y,sz);
-      g.addColorStop(0,"#fffec0");
-      g.addColorStop(0.25,e.c);
-      g.addColorStop(0.8,"rgba(220,240,255,0.14)");
-      g.addColorStop(1,"rgba(17,39,80,0)");
-
-      ctx.globalAlpha = Math.max(0,0.46 - 0.33*fr*fr);
-      ctx.beginPath();
-      ctx.arc(pt.x,pt.y,sz,0,2*Math.PI);
-      ctx.fillStyle = g; ctx.fill();
-      ctx.globalAlpha = 1;
+    // —— Utility ——  
+    function onResize(){
+      renderer.setSize(window.innerWidth,window.innerHeight);
+      camera.aspect = window.innerWidth/window.innerHeight;
+      camera.updateProjectionMatrix();
     }
-  }
-
-  function renderCockpit(){
-    ctx.save();
-    const y0=H*(1-CFG.COCKPIT_H), y1=H,
-          x0=cx-minWH*0.39, x1=cx+minWH*0.39;
-    let dx=0, dy=0;
-    if(game.inShake>0){ dx=rand(-5,5); dy=rand(-8,5); }
-    ctx.beginPath();
-    ctx.moveTo(x0+dx,y1+dy);
-    ctx.bezierCurveTo(x0-50+dx,y1+dy, cx-60+dx,y0-13+dy, cx+dx,y0-16+dy);
-    ctx.bezierCurveTo(cx+60+dx,y0-13+dy, x1+50+dx,y1+dy, x1+dx,y1+dy);
-    ctx.lineTo(cx+dx,y1+dy);
-    ctx.closePath();
-    let cg=ctx.createLinearGradient(cx,y0-10,cx,H);
-    cg.addColorStop(0.05,"#153556");
-    cg.addColorStop(0.4,"#3ab6b64b");
-    cg.addColorStop(0.78,"#7fd9fcea");
-    cg.addColorStop(1,"#1e2641c8");
-    ctx.globalAlpha=0.38;
-    ctx.fillStyle=cg; ctx.fill();
-    ctx.restore(); ctx.globalAlpha=1;
-
-    // crosshair
-    const chx=cx+player.cross.x,
-          chy=cy+CFG.SHIP_Y_BIAS*H+player.cross.y,
-          chSize=minWH*0.07;
-    ctx.save();
-    ctx.lineWidth=2.1; ctx.strokeStyle="#8cfaff";
-    ctx.beginPath();
-    ctx.arc(chx,chy,chSize,0,2*Math.PI);
-    ctx.moveTo(chx-chSize*1.13,chy);
-    ctx.lineTo(chx-chSize*0.42,chy);
-    ctx.moveTo(chx+chSize*1.13,chy);
-    ctx.lineTo(chx+chSize*0.42,chy);
-    ctx.moveTo(chx,chy-chSize*1.13);
-    ctx.lineTo(chx,chy-chSize*0.42);
-    ctx.moveTo(chx,chy+chSize*1.13);
-    ctx.lineTo(chx,chy+chSize*0.42);
-    ctx.globalAlpha=0.82; ctx.stroke();
-    ctx.beginPath();
-    ctx.arc(chx,chy,3.1,0,2*Math.PI);
-    ctx.globalAlpha=0.36; ctx.fillStyle="#fff"; ctx.fill();
-    ctx.restore(); ctx.globalAlpha=1;
-  }
-
-  function renderHud(){
-    ctx.save();
-    ctx.font=`bold ${Math.floor(minWH*0.052)}px Orbitron,monospace`;
-    ctx.fillStyle="#6bf8ff";
-    ctx.shadowColor="#32feffa4"; ctx.shadowBlur=18;
-    ctx.textAlign="left"; ctx.textBaseline="top";
-    ctx.fillText("SCORE "+game.score, W*0.08, H*0.03);
-    ctx.shadowBlur=0;
-    const barW=minWH*0.38, barH=minWH*0.031,
-          x=cx-barW/2, y=H*0.09;
-    ctx.lineJoin="round"; ctx.lineWidth=barH;
-    let gg=ctx.createLinearGradient(x,0,x+barW,0);
-    gg.addColorStop(0,"#3bf8fa");
-    gg.addColorStop(0.49,"#b1faff");
-    gg.addColorStop(0.72, game.health>2?"#77fa7b":"#f7e72f");
-    gg.addColorStop(1, game.health<=1?"#f83262":"#3494ff");
-    ctx.strokeStyle=gg; ctx.beginPath();
-    ctx.moveTo(x,y);
-    ctx.lineTo(x+barW*(game.health/CFG.PLAYER_HEALTH),y);
-    ctx.shadowColor="#abffff"; ctx.shadowBlur=8;
-    ctx.globalAlpha=0.89; ctx.stroke();
-    ctx.shadowBlur=0; ctx.globalAlpha=1;
-    ctx.beginPath();
-    ctx.lineWidth=1.2; ctx.strokeStyle="#e1f9fe7c";
-    ctx.moveTo(x,y); ctx.lineTo(x+barW,y); ctx.stroke();
-    ctx.restore();
-  }
-
-  // — ENTITIES —
-  function spawnAsteroid(){
-    const theta=rand(-Math.PI/2.25,Math.PI/2.25),
-          phi=rand(-Math.PI/5,Math.PI/5),
-          z=rand(CFG.AST_MINZ,CFG.AST_MAXZ),
-          r=rand(CFG.AST_MINR,CFG.AST_MAXR);
-    let x=Math.sin(theta)*z*0.49,
-        y=Math.sin(phi)*z*0.26;
-    if(Math.random()<0.22 && game.score>40){
-      x += player.x*rand(-0.1,0.32);
-      y += player.y*rand(-0.1,0.33);
+    function showHelp(txt,ms=1500){
+      helpInfo.textContent = txt;
+      helpInfo.style.display = 'block';
+      setTimeout(()=> helpInfo.style.display='none', ms);
     }
-    const c=CFG.AST_COLORS[Math.floor(rand(0,CFG.AST_COLORS.length))],
-          speed=rand(CFG.AST_MINSPD,CFG.AST_MAXSPD),
-          sx=rand(-70,70), sy=rand(-55,55);
-    asteroids.push({x,y,z,r,c,speed,sx,sy});
-  }
 
-  function fireLaser(){
-    playSfx("laser");
-    const fov=CFG.FOV*Math.PI/180,
-          focal=cy/Math.tan(fov/2),
-          dz=CFG.LASER_SPEED,
-          dx=player.cross.x*dz/focal,
-          dy=player.cross.y*dz/focal;
-    lasers.push({x:player.x,y:player.y,z:0,dx,dy,dz});
-  }
-
-  // — UTILS —
-  function rand(a,b){ return a+(b-a)*Math.random(); }
-  function clamp(v,min,max){ return v<min?min:v>max?max:v; }
-  function shade(hex,amt){
-    let h=hex.replace('#','');
-    if(h.length===3) h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
-    let num=parseInt(h,16),
-        r=(num>>16)&0xFF,
-        g=(num>>8)&0xFF,
-        b=num&0xFF;
-    r=Math.round(r*(1+amt));
-    g=Math.round(g*(1+amt));
-    b=Math.round(b*(1+amt));
-    return `rgb(${clamp(r,0,255)},${clamp(g,0,255)},${clamp(b,0,255)})`;
-  }
-
-  // — SFX —
-  function playSfx(type){
-    if(!audioCtx){
-      window.AudioContext=window.AudioContext||window.webkitAudioContext;
-      audioCtx=new AudioContext();
-    }
-    if(audioCtx.state==='suspended') audioCtx.resume();
-    let now=audioCtx.currentTime, o,g,f;
-    switch(type){
-      case"laser":
-        o=audioCtx.createOscillator(); g=audioCtx.createGain();
-        o.type='triangle'; o.frequency.value=520;
-        o.connect(g); g.connect(audioCtx.destination);
-        g.gain.value=CFG.SFX_VOL;
-        g.gain.linearRampToValueAtTime(0.01,now+0.18);
-        o.frequency.linearRampToValueAtTime(1100,now+0.06);
-        o.frequency.linearRampToValueAtTime(320,now+0.16);
-        o.start(now); o.stop(now+0.2);
-        break;
-      case"explode":
-        o=audioCtx.createOscillator(); g=audioCtx.createGain();
-        o.type='square'; o.frequency.value=210;
-        f=audioCtx.createBiquadFilter(); f.type='lowpass'; f.frequency.value=700;
-        o.connect(f); f.connect(g); g.connect(audioCtx.destination);
-        g.gain.value=CFG.SFX_VOL*0.82;
-        g.gain.linearRampToValueAtTime(0.01,now+0.32);
-        f.frequency.linearRampToValueAtTime(55,now+0.20);
-        o.frequency.linearRampToValueAtTime(70,now+0.22);
-        o.start(now); o.stop(now+0.29);
-        break;
-      case"hit":
-        o=audioCtx.createOscillator(); g=audioCtx.createGain();
-        o.type='sawtooth'; o.frequency.value=180;
-        o.connect(g); g.connect(audioCtx.destination);
-        g.gain.value=CFG.SFX_VOL*0.60;
-        g.gain.linearRampToValueAtTime(0.01,now+0.14);
-        o.frequency.linearRampToValueAtTime(60,now+0.11);
-        o.start(now); o.stop(now+0.16);
-        break;
-    }
-  }
-
-  // — UI HANDLERS & BOOT —
-  UI.shoot.addEventListener('touchstart',e=>{ shootDown=true; e.preventDefault(); },{passive:false});
-  UI.shoot.addEventListener('mousedown',e=>{ shootDown=true; e.preventDefault(); });
-  ['mouseup','mouseleave','touchend','touchcancel']
-    .forEach(ev=>UI.shoot.addEventListener(ev,()=>{ shootDown=false; },{passive:false}));
-
-  canvas = document.getElementById('canvas');
-  canvas.addEventListener('touchstart', e=>{
-    if(e.touches[0].clientY>H*0.76 && !calibrating && !gameover){
-      beginCalibration();
-      showHelp("Calibration: Hold forward, then tap.",1800);
-    }
-  },{passive:true});
-
-  UI.restartBtn.onclick = ()=>{
-    startNewGame();
-    UI.gameover.style.display='none';
-  };
-
-  function doGameOver(){
-    game.running=false; gameover=true;
-    UI.finalscore.textContent="SCORE: "+game.score;
-    setTimeout(()=>UI.gameover.style.display='flex',300);
-    playSfx("explode");
-  }
-
-  function startNewGame(){
-    t0=tPrev=0; gameover=false;
-    UI.gameover.style.display='none';
-    UI.help.style.display='none';
-    initGame();
-    player.x=player.y=0;
-    requestAnimationFrame(loop);
-  }
-
-  function resizeIfNeeded(){
-    if(canvas.width!==innerWidth*window.devicePixelRatio ||
-       canvas.height!==innerHeight*window.devicePixelRatio){
-      DPR=window.devicePixelRatio||1;
-      W=window.innerWidth; H=window.innerHeight;
-      cx=W/2; cy=H/2; minWH=Math.min(W,H);
-      canvas.width=W*DPR; canvas.height=H*DPR;
-      canvas.style.width=W+"px"; canvas.style.height=H+"px";
-      ctx.setTransform(1,0,0,1,0,0); ctx.scale(DPR,DPR);
-    }
-  }
-
-  function showHelp(txt,ms=1300){
-    UI.help.textContent=txt;
-    UI.help.style.display="block";
-    clearTimeout(helpTimeout);
-    helpTimeout=setTimeout(()=>UI.help.style.display="none",ms);
-  }
-
-  function boot(){
-    canvas=document.getElementById('canvas');
-    ctx=canvas.getContext('2d',{alpha:false});
-    resizeIfNeeded();
-    window.addEventListener('resize',resizeIfNeeded);
-    document.body.addEventListener('touchmove',e=>e.preventDefault(),{passive:false});
-    document.body.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
-    initGame();
-    requireDeviceMotionPermission();
-    showHelp("Tilt to steer, TAP to shoot. Tap cockpit to recalibrate.",2600);
-    requestAnimationFrame(loop);
-  }
-
-  if(document.readyState==="complete"||document.readyState==="interactive"){
-    setTimeout(boot,0);
-  } else {
-    window.addEventListener('load',boot);
-  }
+    // —— Kickoff ——  
+    initThree();
+    requireMotion();
+  })();
   </script>
 </body>
 </html>
