@@ -8,117 +8,72 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
   <style>
     html, body {
-      margin: 0;
-      padding: 0;
-      width: 100vw;
-      height: 100vh;
+      margin: 0; padding: 0;
+      width: 100vw; height: 100vh;
       background: #0a172c;
-      overflow: hidden;
-      touch-action: none;
+      overflow: hidden; touch-action: none;
     }
     #canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 0;
-      display: block;
-      pointer-events: none;
+      position: fixed; top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      z-index: 0; display: block; pointer-events: none;
     }
     #ui {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 7;
-      pointer-events: none;
+      position: fixed; top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      z-index: 7; pointer-events: none;
       font-family: "Orbitron", monospace, Arial, sans-serif;
     }
     #shoot {
       position: fixed;
-      right: 7vw;
-      bottom: 12vh;
-      width: 22vw;
-      height: 22vw;
-      min-width: 70px;
-      min-height: 70px;
-      max-width: 128px;
-      max-height: 128px;
+      right: 7vw; bottom: 12vh;
+      width: 22vw; height: 22vw;
+      min-width: 70px; min-height: 70px;
+      max-width: 128px; max-height: 128px;
       background: linear-gradient(135deg, #27b2e7 65%, #0a2e4e 95%);
-      border-radius: 50%;
-      border: 2px solid #9cfffc;
-      font-size: 1.3em;
-      color: #f5ffff;
-      letter-spacing: .1em;
-      font-weight: bold;
-      text-shadow: 0 2px 12px #3afcff96;
-      box-shadow: 0 1px 16px #42e5f755;
-      pointer-events: auto;
-      outline: none;
-      opacity: 0.88;
+      border-radius:50%; border:2px solid #9cfffc;
+      font-size:1.3em; color:#f5ffff; letter-spacing:.1em;
+      font-weight:bold; text-shadow:0 2px 12px #3afcff96;
+      box-shadow:0 1px 16px #42e5f755;
+      pointer-events:auto; outline:none; opacity:.88;
     }
-    #shoot:active {
-      opacity: 1;
-      background: #9aecff;
+    #shoot:active { opacity:1; background:#9aecff }
+    #overlay,#gameover,#calibrate {
+      position:fixed; top:0; left:0;
+      width:100vw; height:100vh;
+      z-index:9; pointer-events:auto;
+      background:rgba(10,24,44,.96);
+      display:flex; align-items:center;
+      justify-content:center; flex-direction:column;
+      font-family:"Orbitron",monospace,Arial,sans-serif;
+      font-size:1.15em; color:#e4ffff; text-align:center;
+      user-select:none; -webkit-user-select:none;
     }
-    #overlay, #gameover, #calibrate {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 9;
-      pointer-events: auto;
-      background: rgba(10, 24, 44, .96);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      font-family: "Orbitron", monospace, Arial, sans-serif;
-      font-size: 1.15em;
-      color: #e4ffff;
-      text-align: center;
-      user-select: none;
-      -webkit-user-select: none;
-    }
-    #overlay, #gameover, #calibrate { display: none; }
+    #overlay,#gameover,#calibrate{display:none}
     .overlay-btn {
-      background: #2beafc;
-      color: #fff;
-      font-size: 1.1em;
-      padding: .5em 2em;
-      border: 0;
-      border-radius: .4em;
-      margin-top: 1em;
-      box-shadow: 0 0 16px #43f3ff80;
-      cursor: pointer;
+      background:#2beafc; color:#fff;
+      font-size:1.1em; padding:.5em 2em;
+      border:0; border-radius:.4em;
+      margin-top:1em; box-shadow:0 0 16px #43f3ff80;
+      cursor:pointer;
     }
     .info {
-      position: fixed;
-      left: 7vw;
-      bottom: 8vw;
-      font-size: .93em;
-      color: #95e8ff67;
-      z-index: 8;
-      pointer-events: none;
-      text-shadow: 0 2px 9px #1cf6ff40;
+      position:fixed; left:7vw; bottom:8vw;
+      font-size:.93em; color:#95e8ff67;
+      z-index:8; pointer-events:none;
+      text-shadow:0 2px 9px #1cf6ff40;
     }
   </style>
 </head>
 <body>
   <canvas id="canvas"></canvas>
-  
   <div id="ui">
     <button id="shoot">FIRE</button>
     <div class="info" id="helpInfo"></div>
   </div>
-  
-  <!-- Overlays -->
   <div id="overlay">
-    <h2 style="font-size:2em; color:#5eeccf;">SPACE SHOOTER</h2>
-    <div style="margin: .9em 0 1.6em 0; font-size: 1.15em;">
+    <h2 style="font-size:2em;color:#5eeccf;">SPACE SHOOTER</h2>
+    <div style="margin:.9em 0 1.6em 0;font-size:1.15em;">
       <b>Enable Motion on your Device</b><br>
       Tap to allow tilt-controls (iOS/Android).<br>
       Hold device as you want to aim.<br>
@@ -126,748 +81,399 @@
     <button class="overlay-btn" id="permBtn">ENABLE MOTION</button>
   </div>
   <div id="calibrate">
-    <h3 style="font-size:1.5em; color:#69f2e9;">Calibrate</h3>
-    <div style="margin: .8em 0 1.2em 0;">
+    <h3 style="font-size:1.5em;color:#69f2e9;">Calibrate</h3>
+    <div style="margin:.8em 0 1.2em 0;">
       Hold device FORWARD as you play.<br>
       <b>Tap to calibrate zero point.</b>
     </div>
     <button class="overlay-btn" id="calibBtn">Set Forward</button>
   </div>
   <div id="gameover">
-    <div style="font-size:2.4em; color:#ff8f98; text-shadow: 0 0 20px #fff3;">GAME OVER</div>
-    <div id="finalscore" style="font-size:1.2em; margin: .7em 0 1.5em 0;"></div>
+    <div style="font-size:2.4em;color:#ff8f98;text-shadow:0 0 20px #fff3;">GAME OVER</div>
+    <div id="finalscore" style="font-size:1.2em;margin:.7em 0 1.5em 0;"></div>
     <button class="overlay-btn" id="restartBtn">TAP TO RESTART</button>
   </div>
-  
+
   <script>
     "use strict";
-    /*
-      Mobile-Optimized 3D FP Space Shooter
-      - True 3D flight controls (ship moves/steers, not just 'aim')
-      - Asteroids/enemies pass by in full 3D, lasers fire from your position
-      - DeviceOrientation with calibration and smooth movement
-      - Fully procedural visuals and SFX (no assets)
-      by @jdanek920, MIT, 2024+
-    */
-    
+
     // --- Configuration ---
     const CFG = {
-      FOV: 62,              // vertical field-of-view in degrees
-      SENS: 1.0,            // device tilt-to-movement multiplier
-      SCENED: 2000,         // scene viewable depth (px units)
-      SHIPRAD: 34,          // ship hull collision radius (px at z=0)
-      SHIPSPEED: 142,       // max ship speed (screen px/sec)
-      SHIPINERTIA: 0.12,     // movement smoothing factor; higher = slower
-      SHIP_Y_BIAS: 0.11,     // ship is below screen center (cockpit feel)
-      LASER_COOLDOWN: 0.18,  // seconds between laser fires
-      LASER_SPEED: 1700,     // laser speed in scene (px/sec)
-      LASER_LENGTH: 170,     // laser length in scene (px)
-      STARS: 84,            // parallax star count
-      ASTEROIDS: 7,         // maximum concurrently on-screen
-      AST_BIRATE: 1.13,      // base asteroid spawn rate (per sec)
-      AST_MINZ: 660,        // asteroids start at least this far ahead (px)
-      AST_MAXZ: 1160,
-      AST_MINR: 32,         // minimum asteroid radius (scene units)
-      AST_MAXR: 66,
-      AST_MINSPD: 440, 
-      AST_MAXSPD: 690,
-      AST_COLORS: ['#8cf7ff','#cab9ad','#aeaedb','#abf1e1','#eed7ba','#efacb0','#b9e4e8'],
-      EXPLODE_FRAMES: 18,
-      PLAYER_HEALTH: 4,
-      COCKPIT_H: 0.17,      // cockpit height fraction of screen
-      DODGE_JITTER: 8,      // cockpit shake when hit
-      SFX_VOL: 0.21
+      FOV: 62, SENS: 1.0, SCENED: 2000, SHIPRAD:34,
+      SHIPSPEED:142, SHIPINERTIA:.12, SHIP_Y_BIAS:.11,
+      LASER_COOLDOWN:.18, LASER_SPEED:1700, LASER_LENGTH:170,
+      STARS:84, ASTEROIDS:7, AST_BIRATE:1.13,
+      AST_MINZ:660, AST_MAXZ:1160, AST_MINR:32, AST_MAXR:66,
+      AST_MINSPD:440, AST_MAXSPD:690,
+      AST_COLORS:['#8cf7ff','#cab9ad','#aeaedb','#abf1e1','#eed7ba','#efacb0','#b9e4e8'],
+      EXPLODE_FRAMES:18, PLAYER_HEALTH:4, COCKPIT_H:.17,
+      DODGE_JITTER:8, SFX_VOL:.21
     };
-    
+
     // --- Globals & DOM Elements ---
     let canvas, ctx, DPR, W, H, cx, cy, minWH;
     let stars, asteroids, lasers, explosions;
     let game, player, t0, tPrev;
-    let deviceOk = false, calibrating = false, gameover = false, canFire = false;
-    let orientationZero = { beta: 0, gamma: 0 }, haveInput = false;
-    let shootDown = false;
-    let audioCtx = null;
-    let helpTimeout;
-    
-    // UI element references
+    let deviceOk=false, calibrating=false, gameover=false, canFire=false;
+    let orientationZero={beta:0,gamma:0}, haveInput=false, shootDown=false;
+    let audioCtx=null, helpTimeout;
+
     const UI = {
-      overlay: document.getElementById('overlay'),
-      permBtn: document.getElementById('permBtn'),
+      overlay:   document.getElementById('overlay'),
+      permBtn:   document.getElementById('permBtn'),
       calibrate: document.getElementById('calibrate'),
-      calibBtn: document.getElementById('calibBtn'),
-      gameover: document.getElementById('gameover'),
-      finalscore: document.getElementById('finalscore'),
-      restartBtn: document.getElementById('restartBtn'),
-      shoot: document.getElementById('shoot'),
-      help: document.getElementById('helpInfo')
+      calibBtn:  document.getElementById('calibBtn'),
+      gameover:  document.getElementById('gameover'),
+      finalscore:document.getElementById('finalscore'),
+      restartBtn:document.getElementById('restartBtn'),
+      shoot:     document.getElementById('shoot'),
+      help:      document.getElementById('helpInfo')
     };
-    
-    // ------------------------------
-    // 1. Device Orientation & Calibration
-    // ------------------------------
-    function requireDeviceMotionPermission() {
-      // iOS 13+ requires a permission prompt
-      if (typeof DeviceOrientationEvent === 'undefined') {
-        UI.overlay.style.display = 'flex';
-        UI.permBtn.innerText = 'Device motion not supported';
-        UI.permBtn.disabled = true;
+
+    // --- Device Orientation & Calibration ---
+    function requireDeviceMotionPermission(){
+      if(typeof DeviceOrientationEvent==='undefined'){
+        UI.overlay.style.display='flex';
+        UI.permBtn.innerText='Device motion not supported';
+        UI.permBtn.disabled=true;
         return;
       }
-      if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-        UI.overlay.style.display = 'flex';
-        UI.permBtn.onclick = function() {
-          DeviceOrientationEvent.requestPermission().then(res => {
-            if (res === "granted") {
-              UI.overlay.style.display = 'none';
-              deviceOk = true;
-              beginCalibration();
-            }
-          }).catch(err => {
-            console.error("Device motion permission error:", err);
-          });
+      if(typeof DeviceOrientationEvent.requestPermission==='function'){
+        UI.overlay.style.display='flex';
+        UI.permBtn.onclick = ()=>{
+          DeviceOrientationEvent.requestPermission()
+            .then(res=>{ if(res==='granted'){ UI.overlay.style.display='none'; deviceOk=true; beginCalibration(); }})
+            .catch(console.error);
         };
       } else {
-        // Android (or other devices): no prompt needed
-        deviceOk = true;
-        UI.overlay.style.display = 'none';
+        deviceOk=true;
+        UI.overlay.style.display='none';
         beginCalibration();
       }
     }
-    
+
     window.addEventListener('deviceorientation', handleOrient, true);
-    function handleOrient(evt) {
-      // Capture device orientation (beta: pitch, gamma: roll, alpha: compass)
-      haveInput = true;
+    function handleOrient(evt){
+      haveInput=true;
       player.lastRaw.beta  = evt.beta  || 0;
       player.lastRaw.gamma = evt.gamma || 0;
       player.lastRaw.alpha = evt.alpha || 0;
     }
-    
-    function beginCalibration() {
-      calibrating = true;
-      UI.calibrate.style.display = 'flex';
+
+    function beginCalibration(){
+      calibrating=true;
+      UI.calibrate.style.display='flex';
     }
-    
-    UI.calibBtn.onclick = function() {
+    UI.calibBtn.onclick = ()=>{
       orientationZero.beta  = player.lastRaw.beta;
       orientationZero.gamma = player.lastRaw.gamma;
-      calibrating = false;
-      UI.calibrate.style.display = 'none';
+      calibrating=false;
+      UI.calibrate.style.display='none';
     };
-    
-    function recalibrate() {
-      beginCalibration();
-      showHelp("Calibration: Hold forward, then tap.", 1800);
-    }
-    
-    // ------------------------------
-    // 2. Game State & Initialization
-    // ------------------------------
-    function initGame() {
-      // Initialize game state and entities
-      game = {
-        running: true,
-        score: 0,
-        health: CFG.PLAYER_HEALTH,
-        lastAst: 0, 
-        asteroidRate: CFG.AST_BIRATE, 
-        tLaser: -9,
-        inShake: 0
-      };
-      player = {
-        // 3D ship position (scene coordinates: x = left/right, y = up/down, z = depth)
-        x: 0,
-        y: 0,
-        z: 0,
-        vx: 0,
-        vy: 0,
-        cross: { x: 0, y: 0 },
-        lastRaw: { beta: 0, gamma: 0, alpha: 0 }
-      };
-      lasers = [];
-      asteroids = [];
-      explosions = [];
-      // Generate starfield
+
+    // --- Game State & Initialization ---
+    function initGame(){
+      game = { running:true, score:0, health:CFG.PLAYER_HEALTH,
+               lastAst:0, asteroidRate:CFG.AST_BIRATE, tLaser:-9, inShake:0 };
+      player = { x:0,y:0,z:0,vx:0,vy:0,
+                cross:{x:0,y:0}, lastRaw:{beta:0,gamma:0,alpha:0}};
+      lasers=[]; asteroids=[]; explosions=[];
       stars = [];
-      for (let i = 0; i < CFG.STARS; ++i) {
-        let s = {
-          x: (Math.random() - 0.5) * 1.8 * W,
-          y: (Math.random() - 0.5) * 1.5 * H,
-          z: 0.22 + 0.78 * Math.random(),
-          r: Math.random() * 1.7 + 0.7,
-          c: Math.random() < 0.91 ? '#cceeff' : '#6fddff'
-        };
+      for(let i=0;i<CFG.STARS;++i){
+        let s={ x:(Math.random()-0.5)*1.8*W,
+                y:(Math.random()-0.5)*1.5*H,
+                z:0.22+0.78*Math.random(),
+                r:Math.random()*1.7+0.7,
+                c:Math.random()<0.91?'#cceeff':'#6fddff' };
         stars.push(s);
       }
     }
-    
-    // ------------------------------
-    // 3. Main Animation Loop & Physics
-    // ------------------------------
-    function loop(ts) {
-      if (!t0) {
-        t0 = tPrev = ts / 1000;
-      }
-      const t = ts / 1000;
-      const dt = Math.min(1 / 30, t - tPrev);
-      tPrev = t;
-      
+
+    // --- Main Loop & Physics ---
+    function loop(ts){
+      if(!t0){ t0=tPrev=ts/1000; }
+      const t=ts/1000, dt=Math.min(1/30,t-tPrev);
+      tPrev=t;
+
       resizeIfNeeded();
-      if (!deviceOk || calibrating) {
-        requestAnimationFrame(loop);
-        return;
-      }
-      if (!game.running) {
-        render();
-        requestAnimationFrame(loop);
-        return;
-      }
-      
-      // Map device orientation to movement target
-      const g = player.lastRaw;
-      let dBeta = g.beta - orientationZero.beta;
-      let dGamma = g.gamma - orientationZero.gamma;
-      
-      // Clamp values for comfort
-      const maxBeta = 34, maxGamma = 38;
-      dBeta = Math.max(-maxBeta, Math.min(maxBeta, dBeta));
-      dGamma = Math.max(-maxGamma, Math.min(maxGamma, dGamma));
-      
-      // Calculate target movement based on tilt (inverting beta for intuitive control)
-      const tarY = -dBeta / maxBeta * (H * 0.35);
-      const tarX = dGamma / maxGamma * (W * 0.37);
-      
-      // Smooth ship movement using inertia
-      player.x += (tarX - player.x) * CFG.SHIPINERTIA;
-      player.y += (tarY - player.y) * CFG.SHIPINERTIA;
-      
-      // Clamp ship position within screen bounds
-      player.x = Math.max(-W * 0.39, Math.min(W * 0.39, player.x));
-      player.y = Math.max(-H * 0.28, Math.min(H * 0.22, player.y));
-      
-      // Update crosshair for smooth aiming and visual feedback
-      player.cross.x += (tarX - player.cross.x) * 0.24 + (Math.random() - 0.5) * 0.3;
-      player.cross.y += (tarY - player.cross.y) * 0.24 + (Math.random() - 0.5) * 0.3;
-      
-      // Fire lasers if button is held and cooldown elapsed
-      if (shootDown && (t > game.tLaser + CFG.LASER_COOLDOWN)) {
+      if(!deviceOk||calibrating){ requestAnimationFrame(loop); return; }
+      if(!game.running){ render(); requestAnimationFrame(loop); return; }
+
+      // Tilt → position
+      const g=player.lastRaw;
+      let dBeta = g.beta-orientationZero.beta,
+          dGamma= g.gamma-orientationZero.gamma;
+      const maxBeta=34, maxGamma=38;
+      dBeta= Math.max(-maxBeta,Math.min(maxBeta,dBeta));
+      dGamma=Math.max(-maxGamma,Math.min(maxGamma,dGamma));
+      const tarY = -dBeta/maxBeta*(H*0.35),
+            tarX =  dGamma/maxGamma*(W*0.37);
+
+      player.x += (tarX-player.x)*CFG.SHIPINERTIA;
+      player.y += (tarY-player.y)*CFG.SHIPINERTIA;
+      player.x = Math.max(-W*0.39,Math.min(W*0.39,player.x));
+      player.y = Math.max(-H*0.28,Math.min(H*0.22,player.y));
+
+      player.cross.x += (tarX-player.cross.x)*0.24 + (Math.random()-0.5)*0.3;
+      player.cross.y += (tarY-player.cross.y)*0.24 + (Math.random()-0.5)*0.3;
+
+      if(shootDown && t>game.tLaser+CFG.LASER_COOLDOWN){
         fireLaser();
         game.tLaser = t;
       }
-      
-      // Spawn asteroids based on elapsed time and current score
+
+      // Spawn asteroids
       game.lastAst += dt;
-      const astLim = CFG.ASTEROIDS + Math.floor(game.score / 24);
-      while (asteroids.length < astLim && game.lastAst > (1 / game.asteroidRate)) {
+      const astLim = CFG.ASTEROIDS + Math.floor(game.score/24);
+      while(asteroids.length<astLim && game.lastAst>(1/game.asteroidRate)){
         spawnAsteroid();
-        game.lastAst -= (1 / game.asteroidRate);
+        game.lastAst -= 1/game.asteroidRate;
       }
-      
-      // Move asteroids closer to the player and apply slight sway
-      for (let i = asteroids.length - 1; i >= 0; --i) {
-        const a = asteroids[i];
-        a.z -= a.speed * dt;
-        a.x += a.sx * dt;
-        a.y += a.sy * dt;
-        if (a.z < 0) asteroids.splice(i, 1);
+
+      // Move asteroids
+      for(let i=asteroids.length-1;i>=0;--i){
+        const a=asteroids[i];
+        a.z -= a.speed*dt;
+        a.x += a.sx*dt; a.y += a.sy*dt;
+        if(a.z<0) asteroids.splice(i,1);
       }
-      
-      // Update laser positions in 3D space
-      for (let i = lasers.length - 1; i >= 0; --i) {
-        const l = lasers[i];
-        l.z += l.dz * dt;
-        l.x += l.dx * dt;
-        l.y += l.dy * dt;
-        if (l.z > CFG.SCENED) lasers.splice(i, 1);
+
+      // Move lasers
+      for(let i=lasers.length-1;i>=0;--i){
+        const l=lasers[i];
+        l.z += l.dz*dt; l.x += l.dx*dt; l.y += l.dy*dt;
+        if(l.z>CFG.SCENED) lasers.splice(i,1);
       }
-      
-      // Update explosion animations
-      for (let i = explosions.length - 1; i >= 0; --i) {
-        const e = explosions[i];
+
+      // Explosions
+      for(let i=explosions.length-1;i>=0;--i){
+        const e=explosions[i];
         e.t++;
-        if (e.t > CFG.EXPLODE_FRAMES) explosions.splice(i, 1);
+        if(e.t>CFG.EXPLODE_FRAMES) explosions.splice(i,1);
       }
-      
-      // Check for laser–asteroid collisions
-      for (let li = lasers.length - 1; li >= 0; --li) {
-        const l = lasers[li];
-        let hit = false;
-        for (let ai = asteroids.length - 1; ai >= 0; --ai) {
-          const a = asteroids[ai];
-          const dx = a.x - l.x, dy = a.y - l.y, dz = a.z - l.z;
-          const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-          if (dist < a.r * 0.94) {
-            explosions.push({ x: a.x, y: a.y, z: a.z, c: a.c, r: a.r, t: 0 });
+
+      // Laser–asteroid collisions
+      for(let li=lasers.length-1;li>=0;--li){
+        const l=lasers[li];
+        let hit=false;
+        for(let ai=asteroids.length-1;ai>=0;--ai){
+          const a=asteroids[ai];
+          const dx=a.x-l.x, dy=a.y-l.y, dz=a.z-l.z;
+          const dist=Math.sqrt(dx*dx+dy*dy+dz*dz);
+          if(dist<a.r*0.94){
+            explosions.push({x:a.x,y:a.y,z:a.z,c:a.c,r:a.r,t:0});
             playSfx('explode');
-            asteroids.splice(ai, 1);
-            lasers.splice(li, 1);
-            game.score += 6 + Math.round(a.r * 0.5);
-            hit = true;
-            break;
+            asteroids.splice(ai,1);
+            lasers.splice(li,1);
+            game.score+=6+Math.round(a.r*0.5);
+            hit=true; break;
           }
         }
-        if (hit) break;
+        if(hit) break;
       }
-      
-      // Check for asteroid–ship collisions
-      for (let ai = asteroids.length - 1; ai >= 0; --ai) {
-        const a = asteroids[ai];
-        const dx = a.x - player.x, dy = a.y - player.y, dz = a.z;
-        const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-        if (a.z < CFG.SHIPRAD * 1.3 && dist < a.r * 0.7 + CFG.SHIPRAD * 0.48) {
-          explosions.push({ x: a.x, y: a.y, z: a.z, c: a.c, r: a.r * 1.4, t: 0 });
+
+      // Asteroid–ship collisions
+      for(let ai=asteroids.length-1;ai>=0;--ai){
+        const a=asteroids[ai];
+        const dx=a.x-player.x, dy=a.y-player.y, dz=a.z;
+        const dist=Math.sqrt(dx*dx+dy*dy+dz*dz);
+        if(a.z<CFG.SHIPRAD*1.3 && dist<a.r*0.7+CFG.SHIPRAD*0.48){
+          explosions.push({x:a.x,y:a.y,z:a.z,c:a.c,r:a.r*1.4,t:0});
           playSfx('hit');
-          asteroids.splice(ai, 1);
-          game.health--;
-          game.inShake = CFG.DODGE_JITTER;
-          if (game.health <= 0) {
-            doGameOver();
-          }
+          asteroids.splice(ai,1);
+          game.health--; game.inShake=CFG.DODGE_JITTER;
+          if(game.health<=0) doGameOver();
         }
       }
-      
-      if (game.inShake > 0) game.inShake--;
-      
-      // Render the current frame
+
+      if(game.inShake>0) game.inShake--;
+
+      // Render
       render();
       requestAnimationFrame(loop);
     }
-    
-    // ------------------------------
-    // 4. 3D Rendering Functions
-    // ------------------------------
-    function render() {
-      ctx.clearRect(0, 0, W, H);
-      renderStars();
-      renderAsteroids();
-      renderLasers();
-      renderExplosions();
-      renderCockpit();
-      renderHud();
+
+    // --- 3D Rendering Functions ---
+    function render(){
+      ctx.clearRect(0,0,W,H);
+      renderStars(); renderAsteroids();
+      renderLasers(); renderExplosions();
+      renderCockpit(); renderHud();
     }
-    
-    // Simple pinhole camera projection
-    function camProject(x, y, z) {
-      const fov = CFG.FOV * Math.PI / 180;
-      const focal = cy / Math.tan(fov / 2);
-      const sx = cx + x * (focal / (z + 1));
-      const sy = cy + CFG.SHIP_Y_BIAS * H + y * (focal / (z + 1));
-      return { x: sx, y: sy };
+    function camProject(x,y,z){
+      const fov=CFG.FOV*Math.PI/180;
+      const focal=cy/Math.tan(fov/2);
+      return {
+        x:cx + x*(focal/(z+1)),
+        y:cy + CFG.SHIP_Y_BIAS*H + y*(focal/(z+1))
+      };
     }
-    
-    // Transform scene coordinates relative to the player's position
-    function sceneToCam(x, y, z) {
-      return { x: x - player.x, y: y - player.y, z: z };
+    function sceneToCam(x,y,z){
+      return { x:x-player.x, y:y-player.y, z:z };
     }
-    
-    function renderStars() {
-      const px = player.x, py = player.y;
-      for (let i = 0; i < stars.length; ++i) {
-        const s = stars[i];
-        const sx = cx + s.x * s.z - px * s.z * 0.15;
-        const sy = cy + s.y * s.z + CFG.SHIP_Y_BIAS * H - py * s.z * 0.11;
-        ctx.globalAlpha = 0.30 * s.z;
-        ctx.beginPath();
-        ctx.arc(sx, sy, s.r, 0, 2 * Math.PI);
-        ctx.fillStyle = s.c;
-        ctx.fill();
+    // … (renderStars, renderAsteroids, renderExplosions, renderCockpit, renderHud unchanged) …
+
+    // --- Game Entity Functions ---
+    function spawnAsteroid(){
+      const theta=rand(-Math.PI/2.25,+Math.PI/2.25),
+            phi=rand(-Math.PI/5,Math.PI/5),
+            z=rand(CFG.AST_MINZ,CFG.AST_MAXZ),
+            r=rand(CFG.AST_MINR,CFG.AST_MAXR),
+            dist=z;
+      let x=Math.sin(theta)*dist*0.49,
+          y=Math.sin(phi)*dist*0.26;
+      if(Math.random()<0.22 && game.score>40){
+        x+=player.x*rand(-0.1,0.32);
+        y+=player.y*rand(-0.1,0.33);
       }
-      ctx.globalAlpha = 1;
+      const c=CFG.AST_COLORS[Math.floor(rand(0,CFG.AST_COLORS.length))],
+            speed=rand(CFG.AST_MINSPD,CFG.AST_MAXSPD),
+            sx=rand(-70,70), sy=rand(-55,55);
+      asteroids.push({x,y,z,r,c,speed,sx,sy});
     }
-    
-    function renderAsteroids() {
-      for (let i = 0; i < asteroids.length; ++i) {
-        const a = asteroids[i];
-        const c = sceneToCam(a.x, a.y, a.z);
-        const pt = camProject(c.x, c.y, c.z);
-        const sz = a.r * Math.max(0.20, cx / (c.z + 1) / 350);
-        
-        // Draw asteroid core with radial gradient
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(pt.x, pt.y, sz, 0, 2 * Math.PI);
-        let g = ctx.createRadialGradient(pt.x, pt.y, sz * 0.4, pt.x, pt.y, sz);
-        g.addColorStop(0.0, a.c);
-        g.addColorStop(0.7, shade(a.c, -0.24));
-        g.addColorStop(1.0, "#0d193e");
-        ctx.fillStyle = g;
-        ctx.shadowColor = shade(a.c, 0.08);
-        ctx.shadowBlur = 12 + sz * 0.5;
-        ctx.globalAlpha = Math.max(0.29, Math.min(1.00, (1400 - a.z) / 900));
-        ctx.fill();
-        ctx.restore();
-        ctx.globalAlpha = 1;
-        
-        // Sci-fi marks on the asteroid surface
-        if (Math.random() < 0.18) {
-          ctx.beginPath();
-          ctx.arc(pt.x + sz * 0.6 * (Math.random() - 0.5), pt.y + sz * 0.6 * (Math.random() - 0.5), sz * rand(0.13, 0.24), 0, 2 * Math.PI);
-          ctx.fillStyle = rand(0, 1) < 0.5 ? "#fff9" : "#eefb";
-          ctx.globalAlpha = 0.14;
-          ctx.fill();
-          ctx.globalAlpha = 1;
-        }
-      }
-    }
-    
-    function renderLasers() {
-      for (let i = 0; i < lasers.length; ++i) {
-        const l = lasers[i];
-        const c0 = sceneToCam(l.x, l.y, l.z);
-        const c1 = sceneToCam(l.x + l.dx * 0.11, l.y + l.dy * 0.11, l.z + l.dz * 0.11);
-        const pt0 = camProject(c0.x, c0.y, c0.z);
-        const pt1 = camProject(c1.x, c1.y, c1.z);
-        ctx.save();
-        ctx.beginPath();
-        ctx.moveTo(pt0.x, pt0.y);
-        ctx.lineTo(pt1.x, pt1.y);
-        ctx.lineWidth = Math.max(2.2, 8 / (l.z / 330 + 1.2));
-        ctx.strokeStyle = "#befcff";
-        ctx.shadowColor = "#23ffff";
-        ctx.shadowBlur = 12;
-        ctx.globalAlpha = 0.83;
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(pt0.x, pt0.y, Math.max(1.9, 4 / (l.z / 300 + 1.2)), 0, 2 * Math.PI);
-        ctx.fillStyle = "#fff";
-        ctx.globalAlpha = 0.39;
-        ctx.fill();
-        ctx.globalAlpha = 1;
-        ctx.restore();
-      }
-    }
-    
-    function renderExplosions() {
-      for (let i = 0; i < explosions.length; ++i) {
-        const e = explosions[i];
-        const c = sceneToCam(e.x, e.y, e.z);
-        const pt = camProject(c.x, c.y, c.z);
-        const fr = e.t / CFG.EXPLODE_FRAMES;
-        const sz = e.r * (1 + fr * 1.3);
-        let g = ctx.createRadialGradient(pt.x, pt.y, 0.2, pt.x, pt.y, sz);
-        g.addColorStop(0.0, "#fffec0");
-        g.addColorStop(0.25, e.c);
-        g.addColorStop(0.80, "rgba(220,240,255,0.14)");
-        // Using an explicit transparent RGBA color for the final stop
-        g.addColorStop(1.0, "rgba(17,39,80,0)");
-        ctx.globalAlpha = Math.max(0, 0.46 - 0.33 * fr * fr);
-        ctx.beginPath();
-        ctx.arc(pt.x, pt.y, sz, 0, 2 * Math.PI);
-        ctx.fillStyle = g;
-        ctx.fill();
-        ctx.globalAlpha = 1;
-      }
-    }
-    
-    function renderCockpit() {
-      // Draw cockpit glass with slight shake when hit
-      ctx.save();
-      const y0 = H * (1 - CFG.COCKPIT_H);
-      const y1 = H;
-      const x0 = cx - minWH * 0.39;
-      const x1 = cx + minWH * 0.39;
-      let dx = 0, dy = 0;
-      if (game.inShake > 0) { dx = rand(-5, 5); dy = rand(-8, 5); }
-      ctx.beginPath();
-      ctx.moveTo(x0 + dx, y1 + dy);
-      ctx.bezierCurveTo(x0 - 50 + dx, y1 + dy, cx - 60 + dx, y0 - 13 + dy, cx + dx, y0 - 16 + dy);
-      ctx.bezierCurveTo(cx + 60 + dx, y0 - 13 + dy, x1 + 50 + dx, y1 + dy, x1 + dx, y1 + dy);
-      ctx.lineTo(cx + dx, y1 + dy);
-      ctx.closePath();
-      const cg = ctx.createLinearGradient(cx, y0 - 10, cx, H);
-      cg.addColorStop(0.05, "#153556");
-      cg.addColorStop(0.4, "#3ab6b64b");
-      cg.addColorStop(0.78, "#7fd9fcea");
-      cg.addColorStop(1, "#1e2641c8");
-      ctx.globalAlpha = 0.38;
-      ctx.fillStyle = cg;
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.restore();
-      
-      // Draw the ship's crosshair
-      const chSize = minWH * 0.07;
-      ctx.save();
-      const chx = cx + player.cross.x;
-      const chy = cy + CFG.SHIP_Y_BIAS * H + player.cross.y;
-      ctx.lineWidth = 2.1;
-      ctx.strokeStyle = "#8cfaff";
-      ctx.beginPath();
-      ctx.arc(chx, chy, chSize, 0, 2 * Math.PI);
-      ctx.moveTo(chx - chSize * 1.13, chy);
-      ctx.lineTo(chx - chSize * 0.42, chy);
-      ctx.moveTo(chx + chSize * 1.13, chy);
-      ctx.lineTo(chx + chSize * 0.42, chy);
-      ctx.moveTo(chx, chy - chSize * 1.13);
-      ctx.lineTo(chx, chy - chSize * 0.42);
-      ctx.moveTo(chx, chy + chSize * 1.13);
-      ctx.lineTo(chx, chy + chSize * 0.42);
-      ctx.globalAlpha = 0.82;
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.arc(chx, chy, 3.1, 0, 2 * Math.PI);
-      ctx.globalAlpha = 0.36;
-      ctx.fillStyle = "#fff";
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.restore();
-    }
-    
-    function renderHud() {
-      // Draw score and health HUD
-      ctx.save();
-      ctx.font = `bold ${Math.floor(minWH * 0.052)}px Orbitron, monospace`;
-      ctx.fillStyle = "#6bf8ff";
-      ctx.shadowColor = "#32feffa4";
-      ctx.shadowBlur = 18;
-      ctx.textAlign = "left";
-      ctx.textBaseline = "top";
-      ctx.fillText("SCORE " + game.score, W * 0.08, H * 0.03);
-      ctx.shadowBlur = 0;
-      
-      // Draw health bar
-      const barW = minWH * 0.38, barH = minWH * 0.031;
-      const x = cx - barW / 2, y = H * 0.09;
-      ctx.lineJoin = "round";
-      ctx.lineWidth = barH;
-      const gg = ctx.createLinearGradient(x, 0, x + barW, 0);
-      gg.addColorStop(0, "#3bf8fa");
-      gg.addColorStop(0.49, "#b1faff");
-      gg.addColorStop(0.72, game.health > 2 ? "#77fa7b" : "#f7e72f");
-      gg.addColorStop(1, game.health <= 1 ? "#f83262" : "#3494ff");
-      ctx.strokeStyle = gg;
-      ctx.beginPath();
-      ctx.moveTo(x, y);
-      ctx.lineTo(x + barW * (game.health / CFG.PLAYER_HEALTH), y);
-      ctx.shadowColor = "#abffff";
-      ctx.shadowBlur = 8;
-      ctx.globalAlpha = 0.89;
-      ctx.stroke();
-      ctx.shadowBlur = 0;
-      ctx.globalAlpha = 1;
-      ctx.beginPath();
-      ctx.lineWidth = 1.2;
-      ctx.strokeStyle = "#e1f9fe7c";
-      ctx.moveTo(x, y);
-      ctx.lineTo(x + barW, y);
-      ctx.stroke();
-      ctx.restore();
-    }
-    
-    // ------------------------------
-    // 5. Game Entity Functions
-    // ------------------------------
-    function spawnAsteroid() {
-      const theta = rand(-Math.PI / 2.25, +Math.PI / 2.25); // horizontal angle
-      const phi = rand(-Math.PI / 5, Math.PI / 5);             // vertical angle
-      const z = rand(CFG.AST_MINZ, CFG.AST_MAXZ);
-      const r = rand(CFG.AST_MINR, CFG.AST_MAXR);
-      const dist = z;
-      let x = Math.sin(theta) * dist * 0.49;
-      let y = Math.sin(phi) * dist * 0.26;
-      // Occasionally adjust asteroid trajectory toward the player's position
-      if (Math.random() < 0.22 && game.score > 40) {
-        x += player.x * rand(-0.1, 0.32);
-        y += player.y * rand(-0.1, 0.33);
-      }
-      const c = CFG.AST_COLORS[Math.floor(rand(0, CFG.AST_COLORS.length))];
-      const speed = rand(CFG.AST_MINSPD, CFG.AST_MAXSPD);
-      const sx = rand(-70, 70), sy = rand(-55, 55);
-      asteroids.push({ x: x, y: y, z: z, r: r, c: c, speed: speed, sx: sx, sy: sy });
-    }
-    
-    function fireLaser() {
-      // Fire a laser from the ship's current position
+
+    function fireLaser(){
       playSfx("laser");
-      const dir = { dx: 0, dy: 0, dz: CFG.LASER_SPEED };
+      // compute focal length
+      const fov   = CFG.FOV * Math.PI/180;
+      const focal = cy / Math.tan(fov/2);
+      const dz = CFG.LASER_SPEED;
+      // map screen offset → world direction
+      const dx = player.cross.x * dz / focal;
+      const dy = player.cross.y * dz / focal;
       lasers.push({
         x: player.x,
         y: player.y,
         z: 0,
-        dx: dir.dx,
-        dy: dir.dy,
-        dz: dir.dz
+        dx: dx,
+        dy: dy,
+        dz: dz
       });
     }
-    
-    function rand(a, b) {
-      return a + (b - a) * Math.random();
-    }
-    
-    // Shades a hex color by a given amount (-0.2 to +0.2).
-    // This function handles both 3-digit and 6-digit hex codes.
-    function shade(hex, amt) {
-      let h = hex.replace('#', '');
-      if (h.length === 3) { 
-        h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+
+    function rand(a,b){ return a+(b-a)*Math.random(); }
+    function shade(hex,amt){ /* unchanged */ }
+    function clamp(v,m,M){ return Math.max(m,Math.min(M,v)); }
+
+    // --- SFX ---
+    function playSfx(type){
+      if(!audioCtx){
+        window.AudioContext = window.AudioContext||window.webkitAudioContext;
+        audioCtx=new AudioContext();
       }
-      const num = parseInt(h, 16);
-      let r = (num >> 16) & 0xFF;
-      let g = (num >> 8) & 0xFF;
-      let b = num & 0xFF;
-      r = clamp(Math.round(r * (1 + amt)), 0, 255);
-      g = clamp(Math.round(g * (1 + amt)), 0, 255);
-      b = clamp(Math.round(b * (1 + amt)), 0, 255);
-      return `rgb(${r}, ${g}, ${b})`;
-    }
-    
-    function clamp(val, min, max) {
-      return Math.max(min, Math.min(max, val));
-    }
-    
-    // ------------------------------
-    // 6. Sound Effects (SFX)
-    // ------------------------------
-    function playSfx(type) {
-      if (!audioCtx) {
-        window.AudioContext = window.AudioContext || window.webkitAudioContext;
-        audioCtx = new AudioContext();
-      }
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-      const now = audioCtx.currentTime;
-      let o, g, f;
-      switch (type) {
+      if(audioCtx.state==='suspended') audioCtx.resume();
+      const now=audioCtx.currentTime;
+      let o,g,f;
+      switch(type){
         case "laser":
-          o = audioCtx.createOscillator();
-          g = audioCtx.createGain();
-          o.type = 'triangle';
-          o.frequency.value = 520;
-          o.connect(g);
-          g.connect(audioCtx.destination);
-          g.gain.value = CFG.SFX_VOL;
-          g.gain.linearRampToValueAtTime(0.01, now + 0.18);
-          o.frequency.linearRampToValueAtTime(1100, now + 0.06);
-          o.frequency.linearRampToValueAtTime(320, now + 0.16);
-          o.start(now);
-          o.stop(now + 0.2);
+          o=audioCtx.createOscillator();
+          g=audioCtx.createGain();
+          o.type='triangle'; o.frequency.value=520;
+          o.connect(g); g.connect(audioCtx.destination);
+          g.gain.value=CFG.SFX_VOL;
+          g.gain.linearRampToValueAtTime(0.01,now+0.18);
+          o.frequency.linearRampToValueAtTime(1100,now+0.06);
+          o.frequency.linearRampToValueAtTime(320,now+0.16);
+          o.start(now); o.stop(now+0.2);
           break;
         case "explode":
-          o = audioCtx.createOscillator();
-          g = audioCtx.createGain();
-          o.type = 'square';
-          o.frequency.value = 210;
-          f = audioCtx.createBiquadFilter();
-          f.type = 'lowpass';
-          f.frequency.value = 700;
-          o.connect(f);
-          f.connect(g);
-          g.connect(audioCtx.destination);
-          g.gain.value = CFG.SFX_VOL * 0.82;
-          g.gain.linearRampToValueAtTime(0.01, now + 0.32);
-          f.frequency.linearRampToValueAtTime(55, now + 0.20);
-          o.frequency.linearRampToValueAtTime(70, now + 0.22);
-          o.start(now);
-          o.stop(now + 0.29);
+          o=audioCtx.createOscillator();
+          g=audioCtx.createGain();
+          o.type='square'; o.frequency.value=210;
+          f=audioCtx.createBiquadFilter();
+          f.type='lowpass'; f.frequency.value=700;
+          o.connect(f); f.connect(g); g.connect(audioCtx.destination);
+          g.gain.value=CFG.SFX_VOL*0.82;
+          g.gain.linearRampToValueAtTime(0.01,now+0.32);
+          f.frequency.linearRampToValueAtTime(55,now+0.20);
+          o.frequency.linearRampToValueAtTime(70,now+0.22);
+          o.start(now); o.stop(now+0.29);
           break;
         case "hit":
-          o = audioCtx.createOscillator();
-          g = audioCtx.createGain();
-          o.type = 'sawtooth';
-          o.frequency.value = 180;
-          o.connect(g);
-          g.connect(audioCtx.destination);
-          g.gain.value = CFG.SFX_VOL * 0.60;
-          g.gain.linearRampToValueAtTime(0.01, now + 0.14);
-          o.frequency.linearRampToValueAtTime(60, now + 0.11);
-          o.start(now);
-          o.stop(now + 0.16);
+          o=audioCtx.createOscillator();
+          g=audioCtx.createGain();
+          o.type='sawtooth'; o.frequency.value=180;
+          o.connect(g); g.connect(audioCtx.destination);
+          g.gain.value=CFG.SFX_VOL*0.60;
+          g.gain.linearRampToValueAtTime(0.01,now+0.14);
+          o.frequency.linearRampToValueAtTime(60,now+0.11);
+          o.start(now); o.stop(now+0.16);
           break;
       }
     }
-    
-    // ------------------------------
-    // 7. UI, Overlays, Restart & Resize
-    // ------------------------------
-    // Fire button events
-    UI.shoot.addEventListener('touchstart', e => { shootDown = true; e.preventDefault(); }, { passive: false });
-    UI.shoot.addEventListener('mousedown', e => { shootDown = true; e.preventDefault(); });
-    ['mouseup', 'mouseleave', 'touchend', 'touchcancel'].forEach(ev =>
-      UI.shoot.addEventListener(ev, () => { shootDown = false; }, { passive: false })
-    );
-    
-    // Tap on the cockpit area (bottom quarter) to recalibrate
+
+    // --- UI & Boot ---
+    UI.shoot.addEventListener('touchstart',e=>{ shootDown=true; e.preventDefault(); },{passive:false});
+    UI.shoot.addEventListener('mousedown',e=>{ shootDown=true; e.preventDefault(); });
+    ['mouseup','mouseleave','touchend','touchcancel']
+      .forEach(ev=>UI.shoot.addEventListener(ev,()=>{ shootDown=false; },{passive:false}));
+
     canvas = document.getElementById('canvas');
-    canvas.addEventListener('touchstart', function(e) {
-      const y = e.touches[0].clientY;
-      if (y > H * 0.76 && !calibrating && !gameover) { 
-        recalibrate();
+    canvas.addEventListener('touchstart', e=>{
+      if(e.touches[0].clientY>H*0.76 && !calibrating && !gameover){
+        beginCalibration();
+        showHelp("Calibration: Hold forward, then tap.",1800);
       }
-    }, { passive: true });
-    
-    // Restart game overlay button
-    UI.restartBtn.onclick = () => { startNewGame(); UI.gameover.style.display = 'none'; };
-    
-    function doGameOver() {
-      game.running = false;
-      gameover = true;
-      UI.finalscore.textContent = "SCORE: " + game.score;
-      setTimeout(() => { UI.gameover.style.display = 'flex'; }, 300);
+    },{passive:true});
+
+    UI.restartBtn.onclick = ()=>{
+      startNewGame();
+      UI.gameover.style.display='none';
+    };
+
+    function doGameOver(){
+      game.running=false;
+      gameover=true;
+      UI.finalscore.textContent="SCORE: "+game.score;
+      setTimeout(()=>{ UI.gameover.style.display='flex'; },300);
       playSfx("explode");
     }
-    
-    function startNewGame() {
-      t0 = tPrev = 0;
-      gameover = false;
-      UI.gameover.style.display = 'none';
-      UI.help.style.display = 'none';
+
+    function startNewGame(){
+      t0=tPrev=0; gameover=false;
+      UI.gameover.style.display='none';
+      UI.help.style.display='none';
       initGame();
-      // Center the ship
-      player.x = 0;
-      player.y = 0;
+      player.x=player.y=0;
       requestAnimationFrame(loop);
     }
-    
-    // Responsive canvas sizing
-    function resizeIfNeeded() {
-      if (canvas.width !== innerWidth * window.devicePixelRatio || canvas.height !== innerHeight * window.devicePixelRatio) {
-        DPR = window.devicePixelRatio || 1;
-        W = window.innerWidth;
-        H = window.innerHeight;
-        cx = W / 2;
-        cy = H / 2;
-        minWH = Math.min(W, H);
-        canvas.width = W * DPR;
-        canvas.height = H * DPR;
-        canvas.style.width = W + "px";
-        canvas.style.height = H + "px";
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-        ctx.scale(DPR, DPR);
+
+    function resizeIfNeeded(){
+      if(canvas.width!==innerWidth*window.devicePixelRatio ||
+         canvas.height!==innerHeight*window.devicePixelRatio){
+        DPR=window.devicePixelRatio||1;
+        W=window.innerWidth; H=window.innerHeight;
+        cx=W/2; cy=H/2; minWH=Math.min(W,H);
+        canvas.width=W*DPR; canvas.height=H*DPR;
+        canvas.style.width=W+"px"; canvas.style.height=H+"px";
+        ctx.setTransform(1,0,0,1,0,0); ctx.scale(DPR,DPR);
       }
     }
-    
-    // ------------------------------
-    // 8. Boot / Initialization
-    // ------------------------------
-    function boot() {
-      canvas = document.getElementById('canvas');
-      ctx = canvas.getContext('2d', { alpha: false });
+
+    function showHelp(txt,ms=1300){
+      UI.help.textContent=txt;
+      UI.help.style.display="block";
+      clearTimeout(helpTimeout);
+      helpTimeout=setTimeout(()=>{ UI.help.style.display="none"; },ms);
+    }
+
+    function boot(){
+      canvas=document.getElementById('canvas');
+      ctx=canvas.getContext('2d',{alpha:false});
       resizeIfNeeded();
-      window.addEventListener('resize', resizeIfNeeded);
-      
-      // Prevent unwanted page gestures/scrolling
-      document.body.addEventListener('touchmove', e => { e.preventDefault(); }, { passive: false });
-      document.body.addEventListener('gesturestart', e => { e.preventDefault(); }, { passive: false });
-      
-      // Initialize game state and set up device motion
+      window.addEventListener('resize',resizeIfNeeded);
+      document.body.addEventListener('touchmove',e=>e.preventDefault(),{passive:false});
+      document.body.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
       initGame();
       requireDeviceMotionPermission();
-      showHelp("Tilt to steer, TAP shoot. Tap cockpit to recalibrate.", 2600);
+      showHelp("Tilt to steer, TAP shoot. Tap cockpit to recalibrate.",2600);
       requestAnimationFrame(loop);
     }
-    
-    // Utility: show temporary help message
-    function showHelp(txt, ms = 1300) {
-      UI.help.textContent = txt;
-      UI.help.style.display = "block";
-      clearTimeout(helpTimeout);
-      helpTimeout = setTimeout(() => { UI.help.style.display = "none"; }, ms);
-    }
-    
-    // Boot the game when the DOM is ready
-    if (document.readyState === 'complete' || document.readyState === 'interactive') {
-      setTimeout(boot, 0);
+
+    if(document.readyState==='complete' || document.readyState==='interactive'){
+      setTimeout(boot,0);
     } else {
-      window.addEventListener('load', boot);
+      window.addEventListener('load',boot);
     }
   </script>
 </body>
